@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2025 Olafcio
+ * (Olafcio1 on GitHub)
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
 package pl.olafcio.protocolextension.server;
 
 import com.github.retrooper.packetevents.PacketEvents;
@@ -12,7 +33,6 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
-import net.minecraft.nbt.NbtCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,13 +40,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import pl.olafcio.protocolextension.server.api.packetevents.ProtocolExtensionPacketEventsListener;
-import pl.olafcio.protocolextension.server.api.virtual.API;
-import pl.olafcio.protocolextension.server.api.packetevents.ProtocolExtensionPacketEventsAPI;
+import pl.olafcio.protocolextension.server.api.base.ListenerManagerImpl;
+import pl.olafcio.protocolextension.server.api.base.ProtocolExtensionAPIRecord;
+import pl.olafcio.protocolextension.server.api.player.packetevents.ProtocolExtensionPacketEventsPacketListener;
+import pl.olafcio.protocolextension.server.api.player.packetevents.ProtocolExtensionPacketEventsPlayerManager;
+import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionAPI;
 import pl.olafcio.protocolextension.both.Position;
 
-import java.awt.*;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -41,9 +63,12 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
     private static File configFile;
     private static FileConfiguration config;
 
-    private static API api = new ProtocolExtensionPacketEventsAPI();
+    private static ProtocolExtensionAPI api = new ProtocolExtensionAPIRecord(
+            new ListenerManagerImpl(),
+            new ProtocolExtensionPacketEventsPlayerManager()
+    );
     static {
-        api.registerListener(new VariableAPI());
+        api.listenerManager().registerListener(new VariableAPI());
     }
 
     @Override
@@ -68,7 +93,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
-        PacketEvents.getAPI().getEventManager().registerListener(new ProtocolExtensionPacketEventsListener(), PacketListenerPriority.NORMAL);
+        PacketEvents.getAPI().getEventManager().registerListener(new ProtocolExtensionPacketEventsPacketListener(), PacketListenerPriority.NORMAL);
 
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             var px = Commands.literal("protocolextension")
@@ -93,7 +118,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
 
                             var player = getSinglePlayer(playerArg, source);
                             if (player != null) {
-                                api.forceHUD(player, state);
+                                api.playerManager().forceHUD(player, state);
                                 source.getSender().sendMessage("§8[§c🎈§8]§7 Forced HUD state to §l" + state + "§7 for §6" + player.getName());
                             }
 
@@ -142,7 +167,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
 
                             var player = getSinglePlayer(playerArg, source);
                             if (player != null) {
-                                api.putHUD(player, id.shortValue(), (double) x, (double) y, textNBT);
+                                api.playerManager().putHUD(player, id.shortValue(), (double) x, (double) y, textNBT);
                                 source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element added successfully.");
                             }
 
@@ -163,7 +188,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
                         var playerArg = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
                         var player = getSinglePlayer(playerArg, source);
                         if (player != null) {
-                            api.deleteHUD(player, id.shortValue());
+                            api.playerManager().deleteHUD(player, id.shortValue());
                             source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element deletion packet sent.");
                         }
 
@@ -179,9 +204,13 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        //TODO: Make this implementation-specific
-        var activation = ProtocolExtensionPacketEventsAPI.Packets.make("activation");
-        PacketEvents.getAPI().getPlayerManager().getUser(event.getPlayer()).sendPacket(activation);
+        api.playerManager().activate(event.getPlayer());
+        api.listenerManager().dispatchEvent("onConnect", event, new Class<?>[]{}, new Object[]{});
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        api.listenerManager().dispatchEvent("onDisconnect", event, new Class<?>[]{}, new Object[]{});
     }
 
     private Player getSinglePlayer(PlayerSelectorArgumentResolver arg, CommandSourceStack source) throws CommandSyntaxException {
@@ -205,7 +234,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
         }
     }
 
-    public static API getAPI() {
+    public static ProtocolExtensionAPI getAPI() {
         return api;
     }
 }

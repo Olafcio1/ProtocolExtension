@@ -1,4 +1,25 @@
-package pl.olafcio.protocolextension.server.api.packetevents;
+/*
+ * Copyright (c) 2025 Olafcio
+ * (Olafcio1 on GitHub)
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
+package pl.olafcio.protocolextension.server.api.player.packetevents;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.User;
@@ -7,17 +28,11 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import io.netty.buffer.Unpooled;
 import net.kyori.adventure.text.Component;
-import net.minecraft.nbt.NbtCompound;
 import org.bukkit.entity.Player;
-import pl.olafcio.protocolextension.server.api.virtual.API;
 import pl.olafcio.protocolextension.server.api.PacketConstructionError;
-import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionListener;
+import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class ProtocolExtensionPacketEventsAPI implements API {
+public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager {
     //#region Packets
     public enum Packets {
         ;
@@ -27,17 +42,15 @@ public class ProtocolExtensionPacketEventsAPI implements API {
             buf.setBuffer(Unpooled.buffer());
 
             for (var obj : codec)
-                if (obj instanceof Boolean bool)
-                    buf.writeBoolean(bool);
-                else if (obj instanceof Short s)
-                    buf.writeShort(s);
-                else if (obj instanceof Float f)
-                    buf.writeFloat(f);
-                else if (obj instanceof Double d)
-                    buf.writeDouble(d);
-                else if (obj instanceof String s)
-                    buf.writeString(s);
-                else throw new PacketConstructionError("Cannot encode type '" + obj.getClass().getName() + "'");
+                switch (obj) {
+                    case Boolean bool -> buf.writeBoolean(bool);
+                    case Short s -> buf.writeShort(s);
+                    case Float f -> buf.writeFloat(f);
+                    case Double d -> buf.writeDouble(d);
+                    case String s -> buf.writeString(s);
+                    case null, default ->
+                            throw new PacketConstructionError("Cannot encode type '" + obj.getClass().getName() + "'");
+                }
 
             var data = buf.readRemainingBytes();
             return new WrapperPlayServerPluginMessage(type, data);
@@ -47,6 +60,12 @@ public class ProtocolExtensionPacketEventsAPI implements API {
     //#region User methods
     public enum UserMethods {
         ;
+
+        public static void activate(User player) {
+            player.sendPacket(Packets.make(
+                    "protocolextension:activate"
+            ));
+        }
 
         public static void forceHUD(User player, boolean state) {
             player.sendPacket(Packets.make(
@@ -73,44 +92,12 @@ public class ProtocolExtensionPacketEventsAPI implements API {
         }
     }
 
-    //#region Listeners
-    private final ArrayList<ProtocolExtensionListener> listeners = new ArrayList<>();
-
-    @Override
-    public void registerListener(ProtocolExtensionListener listener) {
-        listeners.add(listener);
-    }
-
-    @Override
-    public boolean unregisterListener(ProtocolExtensionListener listener) {
-        return listeners.remove(listener);
-    }
-
-    //#region Listener events
-    @Override
-    public void dispatchEvent(String methodName, Player player, Class<?>[] types, Object[] values) {
-        var typeList = new ArrayList<Class<?>>();
-        typeList.add(Player.class);
-        typeList.addAll(List.of(types));
-
-        var valueList = new ArrayList<>();
-        valueList.add(player);
-        valueList.addAll(List.of(values));
-
-        var typeArray = typeList.toArray(Class<?>[]::new);
-        var valueArray = valueList.toArray(Object[]::new);
-
-        try {
-            for (var listener : listeners) {
-                var method = listener.getClass().getDeclaredMethod(methodName, typeArray);
-                method.invoke(listener, valueArray);
-            }
-        } catch (RuntimeException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     //#region Player methods
+    @Override
+    public void activate(Player player) {
+        UserMethods.activate(PacketEvents.getAPI().getPlayerManager().getUser(player));
+    }
+
     @Override
     public void forceHUD(Player player, boolean state) {
         UserMethods.forceHUD(PacketEvents.getAPI().getPlayerManager().getUser(player), state);

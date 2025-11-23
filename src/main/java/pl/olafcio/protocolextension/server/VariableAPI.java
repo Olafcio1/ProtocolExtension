@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2025 Olafcio
+ * (Olafcio1 on GitHub)
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
 package pl.olafcio.protocolextension.server;
 
 import org.bukkit.entity.Player;
@@ -9,11 +30,15 @@ import java.util.HashMap;
 
 public final class VariableAPI implements ProtocolExtensionListener {
     private static final HashMap<Player, Position> plr2mousePos = new HashMap<>();
-    //TODO: plr2mousePos.remove(player) in an onDisconnect method in a future release
 
     @Override
     public void onMouseMove(Player player, double x, double y) {
         plr2mousePos.put(player, new Position(x, y));
+    }
+
+    @Override
+    public void onDisconnect(Player player) {
+        plr2mousePos.remove(player);
     }
 
     public static @Nullable Position getMousePos(Player player) {

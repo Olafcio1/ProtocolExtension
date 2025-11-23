@@ -19,15 +19,20 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api.virtual;
+package pl.olafcio.protocolextension.server.api.virtual.managers;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
-@SuppressWarnings("unused")
-public interface ProtocolExtensionListener {
-    default void onMouseMove(Player player, double x, double y) {}
-    default void onKeyPressed(Player player, int key) {}
+public interface PlayerManager {
+    /**
+     * Used to enable ProtocolExtension support in the client.
+     * Should be called only once.
+     */
+    void activate(Player player);
 
-    default void onConnect(Player player) {}
-    default void onDisconnect(Player player) {}
+    // TODO: write documentation
+    void forceHUD(Player player, boolean state);
+    void putHUD(Player player, short id, double x, double y, Component text);
+    void deleteHUD(Player player, short id);
 }

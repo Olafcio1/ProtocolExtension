@@ -19,15 +19,26 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api.virtual;
+package pl.olafcio.protocolextension.server.api.virtual.managers;
 
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerEvent;
+import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionListener;
 
-@SuppressWarnings("unused")
-public interface ProtocolExtensionListener {
-    default void onMouseMove(Player player, double x, double y) {}
-    default void onKeyPressed(Player player, int key) {}
+public interface ListenerManager {
+    //#region Registration
+    void registerListener(ProtocolExtensionListener listener);
+    boolean unregisterListener(ProtocolExtensionListener listener);
 
-    default void onConnect(Player player) {}
-    default void onDisconnect(Player player) {}
+    //#region Dispatching events
+    void dispatchEvent(String methodName, Player player, Class<?>[] types, Object[] values);
+
+    default void dispatchEvent(String methodName, PacketReceiveEvent event, Class<?>[] types, Object[] values) {
+        dispatchEvent(methodName, (Player) event.getPlayer(), types, values);
+    }
+
+    default void dispatchEvent(String methodName, PlayerEvent event, Class<?>[] types, Object[] values) {
+        dispatchEvent(methodName, event.getPlayer(), types, values);
+    }
 }

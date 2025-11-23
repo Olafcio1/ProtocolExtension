@@ -19,15 +19,13 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api.virtual;
+package pl.olafcio.protocolextension.server.api.base;
 
-import org.bukkit.entity.Player;
+import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionAPI;
+import pl.olafcio.protocolextension.server.api.virtual.managers.ListenerManager;
+import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
-@SuppressWarnings("unused")
-public interface ProtocolExtensionListener {
-    default void onMouseMove(Player player, double x, double y) {}
-    default void onKeyPressed(Player player, int key) {}
-
-    default void onConnect(Player player) {}
-    default void onDisconnect(Player player) {}
-}
+public record ProtocolExtensionAPIRecord(
+        ListenerManager listenerManager,
+        PlayerManager playerManager
+) implements ProtocolExtensionAPI {}

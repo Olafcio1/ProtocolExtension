@@ -21,13 +21,10 @@
 
 package pl.olafcio.protocolextension.server.api.virtual;
 
-import org.bukkit.entity.Player;
+import pl.olafcio.protocolextension.server.api.virtual.managers.ListenerManager;
+import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
-@SuppressWarnings("unused")
-public interface ProtocolExtensionListener {
-    default void onMouseMove(Player player, double x, double y) {}
-    default void onKeyPressed(Player player, int key) {}
-
-    default void onConnect(Player player) {}
-    default void onDisconnect(Player player) {}
+public interface ProtocolExtensionAPI {
+    ListenerManager listenerManager();
+    PlayerManager playerManager();
 }
