@@ -3,10 +3,12 @@
   "minVersion": "0.8",
   "package": "pl.olafcio.protocolextension.client.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [
-  ],
+  "mixins": [],
   "client": [
-    "KeyboardMixin"
+    "IngameHudMixin",
+    "KeyboardMixin",
+    "MinecraftClientMixin",
+    "MouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
