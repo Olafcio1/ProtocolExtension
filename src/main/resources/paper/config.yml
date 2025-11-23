@@ -1,0 +1,30 @@
+#  ---------------[ ProtocolExtension ]--------------------------
+#  The only piece of software installable on both the client and
+#  server that allows huge customization, universally for all
+#  servers.
+#
+#  (as far as I know, maybe there's another solution which I am
+#   not familiar with)
+#  --------------------------------------------------------------
+
+# If set to true, kicks players that do not have ProtocolExtension (this mod) installed.
+require-installation:
+  state: false
+  kick-message: |-
+    <GRADIENT:#1E90FF>&m                                                       </GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>&lError</GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>&m                                                       </GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>This server requires you to install the following mod(s):</GRADIENT:#901EFF>
+    <GRADIENT:#901EFF>ProtocolExtension (modrinth.com/Olafcio1/protocolextension)</GRADIENT:#1E90FF>
+    <GRADIENT:#1E90FF>&m                                                       </GRADIENT:#901EFF>
+
+# If set to true, sends a chat message to players that do not have ProtocolExtension (this mod) installed.
+suggest-installation:
+  state: true
+  chat-message: |-
+    <GRADIENT:#1E90FF>&m                                             </GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>&lWarning</GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>&m                                             </GRADIENT:#901EFF>
+    <GRADIENT:#1E90FF>To have the best experience, please install the following mod(s):</GRADIENT:#901EFF>
+    <GRADIENT:#901EFF>ProtocolExtension (modrinth.com/Olafcio1/protocolextension)</GRADIENT:#1E90FF>
+    <GRADIENT:#1E90FF>&m                                             </GRADIENT:#901EFF>

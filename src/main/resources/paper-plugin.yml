@@ -1,0 +1,15 @@
+name: ProtocolExtension
+description: The perfect solution for adding custom content onto your server!
+authors:
+  - Olafcio
+website: https://olafcio1.github.io
+version: '1.0'
+main: pl.olafcio.protocolextension.server.ProtocolExtension
+api-version: '1.21.10'
+load: STARTUP
+dependencies:
+  server:
+    packetevents:
+      load: BEFORE
+      required: true
+      join-classpath: true

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "protocolextension",
+  "version": "${version}",
+  "name": "ProtocolExtension",
+  "description": "The perfect solution for adding custom content onto your server!",
+  "authors": [
+    "Olafcio"
+  ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "fabric/assets/protocolextension/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "pl.olafcio.protocolextension.client.MainDataGenerator"
+    ],
+    "client": [
+      "pl.olafcio.protocolextension.client.Main"
+    ],
+    "main": [
+      "pl.olafcio.protocolextension.client.Main"
+    ]
+  },
+  "mixins": [
+    "fabric/protocolextension.mixins.json"
+  ],
+  "recommends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
