@@ -2,7 +2,6 @@
 
 <h1>ProtocolExtension</h1>
 <p>Minecraft protocol additions</p>
-<hr>
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Olafcio1/ProtocolExtension/total?style=plastic&logo=github&color=%23FFFFFF)
 ![Modrinth Downloads](https://img.shields.io/modrinth/dt/protocolextension?style=plastic&logo=modrinth&color=%2300AF5C)<br/>
@@ -11,7 +10,7 @@
 </div>
 
 ## 🤔 What is ProtocolExtension
-PX* adds more packets to the game so servers can further customize playing experience without making their own client-side mod for the clients to install.
+PX* adds more packets to the game so servers can further customize gameplay without making their own client-side mod for the clients to install.
 
 This makes it easier for both the servers, and the players, as it is a universal solution for potentially lots of servers, without degrading user experience - you can still play servers without PX with PX installed client-side, and on servers with PX without it installed client-side.
 
@@ -19,7 +18,6 @@ This makes it easier for both the servers, and the players, as it is a universal
 
 ## 🪶 Packets
 
----
 | Name                       | Brief                                                            | Version |
 |----------------------------|------------------------------------------------------------------|---------|
 | **[Serverbound]**          |                                                                  |         |
@@ -46,7 +44,7 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
 
    the recommended method is embedding its JAR file in your project structure and
    adding it as a compile-only package in your package manager.
-   <br/><br/>
+   <br/>
 
    - download the latest PX .jar file and add it to the `libs/` directory
    - add the following code to your `maven.pom`

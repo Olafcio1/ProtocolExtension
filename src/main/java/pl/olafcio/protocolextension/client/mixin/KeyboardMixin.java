@@ -40,6 +40,10 @@ public class KeyboardMixin {
                 NetworkUtil.enabled &&
                 action == GLFW.GLFW_PRESS &&
                 input.key() != GLFW.GLFW_KEY_ESCAPE &&
+                input.key() != GLFW.GLFW_KEY_UNKNOWN &&
+                // Tf are world keys lmfao
+                input.key() != GLFW.GLFW_KEY_WORLD_1 &&
+                input.key() != GLFW.GLFW_KEY_WORLD_2 &&
 //                !input.hasCtrl() &&
                 !input.hasAlt() &&
 //                !input.hasShift() &&
