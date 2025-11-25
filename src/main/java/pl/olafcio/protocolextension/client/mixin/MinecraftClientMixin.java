@@ -23,24 +23,54 @@ package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.RunArgs;
+import net.minecraft.client.network.ServerInfo;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
+import pl.olafcio.protocolextension.client.state.WindowTitle;
 import pl.olafcio.protocolextension.client.state.hud.HudState;
 
 @Mixin(MinecraftClient.class)
-public class MinecraftClientMixin {
+public abstract class MinecraftClientMixin {
+    @Shadow
+    @Nullable
+    public abstract ServerInfo getCurrentServerEntry();
+
     @Inject(at = @At("TAIL"), method = "<init>")
     public void init(RunArgs args, CallbackInfo ci) {
         Main.mc = (MinecraftClient) (Object) this;
     }
 
+    @Inject(at = @At("RETURN"), method = "getWindowTitle", cancellable = true)
+    public void getWindowTitle(CallbackInfoReturnable<String> cir) {
+        if (WindowTitle.text != null) {
+            var server = getCurrentServerEntry();
+            assert server != null;
+
+            var original = cir.getReturnValue();
+            var string =
+                    original.split("-", 2)[0] +
+                    " - " +
+                    StringUtils.capitalize(server.name) +
+                    " - " +
+                    WindowTitle.text;
+
+            cir.setReturnValue(string);
+        }
+    }
+
     @Inject(at = @At("HEAD"), method = "onDisconnected")
     public void onDisconnected(CallbackInfo ci) {
         NetworkUtil.enabled = false;
+        WindowTitle.text = null;
+
         HudState.elements.clear();
     }
 }

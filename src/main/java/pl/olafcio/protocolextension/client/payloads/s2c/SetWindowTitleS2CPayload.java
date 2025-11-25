@@ -19,16 +19,25 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api;
+package pl.olafcio.protocolextension.client.payloads.s2c;
 
-/**
- * An error that's caused by invalid parameters passed to the
- * {@code ProtocolExtensionPacketEventsPlayerManager.Packets.make} function.
- * <p>
- * May be also used in other API implementations.
- */
-public class PacketConstructionError extends RuntimeException {
-    public PacketConstructionError(String e) {
-        super(e);
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.util.Identifier;
+
+public record SetWindowTitleS2CPayload(String title) implements CustomPayload {
+    public static final Identifier ID_RAW = Identifier.of("protocolextension", "set-window-title");
+
+    public static final Id<SetWindowTitleS2CPayload> ID = new Id<>(ID_RAW);
+    public static final PacketCodec<RegistryByteBuf, SetWindowTitleS2CPayload> CODEC = PacketCodec.tuple(
+            PacketCodecs.STRING, SetWindowTitleS2CPayload::title,
+            SetWindowTitleS2CPayload::new
+    );
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return ID;
     }
 }

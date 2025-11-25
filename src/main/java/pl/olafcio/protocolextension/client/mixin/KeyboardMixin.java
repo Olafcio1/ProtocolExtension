@@ -40,9 +40,9 @@ public class KeyboardMixin {
                 NetworkUtil.enabled &&
                 action == GLFW.GLFW_PRESS &&
                 input.key() != GLFW.GLFW_KEY_ESCAPE &&
-                !input.hasCtrl() &&
+//                !input.hasCtrl() &&
                 !input.hasAlt() &&
-                !input.hasShift() &&
+//                !input.hasShift() &&
                 Main.mc.currentScreen == null
         ) {
             NetworkUtil.send(new KeyPressedC2SPayload(input.key()));

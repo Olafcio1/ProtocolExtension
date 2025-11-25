@@ -168,7 +168,7 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
                             var player = getSinglePlayer(playerArg, source);
                             if (player != null) {
                                 api.playerManager().putHUD(player, id.shortValue(), (double) x, (double) y, textNBT);
-                                source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element added successfully.");
+                                source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element added.");
                             }
 
                             return SINGLE_SUCCESS;
@@ -189,7 +189,47 @@ public final class ProtocolExtension extends JavaPlugin implements Listener {
                         var player = getSinglePlayer(playerArg, source);
                         if (player != null) {
                             api.playerManager().deleteHUD(player, id.shortValue());
-                            source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element deletion packet sent.");
+                            source.getSender().sendMessage("§8[§c🎈§8]§7 HUD element deleted.");
+                        }
+
+                        return SINGLE_SUCCESS;
+                    })
+            )));
+
+            px.then(Commands.literal("clear-hud")
+                    .requires(restricted(source -> source.getSender().hasPermission(
+                            "protocolextension.command.clear_hud"
+                    )))
+                    .then(Commands.argument("player", ArgumentTypes.player())
+                    .executes(ctx -> {
+                        var source = ctx.getSource();
+                        var playerArg = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
+
+                        var player = getSinglePlayer(playerArg, source);
+                        if (player != null) {
+                            api.playerManager().clearHUD(player);
+                            source.getSender().sendMessage("§8[§c🎈§8]§7 HUD elements cleared.");
+                        }
+
+                        return SINGLE_SUCCESS;
+                    })
+            ));
+
+            px.then(Commands.literal("set-window-title")
+                    .requires(restricted(source -> source.getSender().hasPermission(
+                            "protocolextension.command.set_window_title"
+                    )))
+                    .then(Commands.argument("player", ArgumentTypes.player())
+                    .then(Commands.argument("text", ArgumentTypes.component())
+                    .executes(ctx -> {
+                        var source = ctx.getSource();
+                        var component = ctx.getArgument("text", Component.class);
+
+                        var playerArg = ctx.getArgument("player", PlayerSelectorArgumentResolver.class);
+                        var player = getSinglePlayer(playerArg, source);
+                        if (player != null) {
+                            api.playerManager().setWindowTitle(player, component);
+                            source.getSender().sendMessage("§8[§c🎈§8]§7 Window title changed.");
                         }
 
                         return SINGLE_SUCCESS;

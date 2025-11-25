@@ -31,10 +31,8 @@ import org.slf4j.LoggerFactory;
 import pl.olafcio.protocolextension.both.Position;
 import pl.olafcio.protocolextension.client.payloads.c2s.KeyPressedC2SPayload;
 import pl.olafcio.protocolextension.client.payloads.c2s.MouseMoveC2SPayload;
-import pl.olafcio.protocolextension.client.payloads.s2c.ActivateS2CPayload;
-import pl.olafcio.protocolextension.client.payloads.s2c.DeleteHUDElementS2CPayload;
-import pl.olafcio.protocolextension.client.payloads.s2c.PutHUDElementS2CPayload;
-import pl.olafcio.protocolextension.client.payloads.s2c.ToggleHUDS2CPayload;
+import pl.olafcio.protocolextension.client.payloads.s2c.*;
+import pl.olafcio.protocolextension.client.state.WindowTitle;
 import pl.olafcio.protocolextension.client.state.hud.HudElement;
 import pl.olafcio.protocolextension.client.state.hud.HudState;
 
@@ -51,10 +49,13 @@ public class Main implements ModInitializer, ClientModInitializer {
         PayloadTypeRegistry.playC2S().register(MouseMoveC2SPayload.ID, MouseMoveC2SPayload.CODEC);
 
         // S2C
-        PayloadTypeRegistry.playS2C().register(ToggleHUDS2CPayload.ID, ToggleHUDS2CPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(ActivateS2CPayload.ID, ActivateS2CPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(ToggleHUDS2CPayload.ID, ToggleHUDS2CPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(PutHUDElementS2CPayload.ID, PutHUDElementS2CPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(DeleteHUDElementS2CPayload.ID, DeleteHUDElementS2CPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(ClearHUDS2CPayload.ID, ClearHUDS2CPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(SetWindowTitleS2CPayload.ID, SetWindowTitleS2CPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(ServerCommandS2CPayload.ID, ServerCommandS2CPayload.CODEC);
     }
 
     @Override
@@ -84,6 +85,23 @@ public class Main implements ModInitializer, ClientModInitializer {
             context.client().execute(() -> {
                 if (HudState.elements.remove(payload.id()) == null)
                     logger.warn("Tried to delete non-existent HUD element");
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ClearHUDS2CPayload.ID, (payload, context) -> {
+            context.client().execute(HudState.elements::clear);
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(SetWindowTitleS2CPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                WindowTitle.text = payload.title();
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(ServerCommandS2CPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                context.client().options.sneakKey.setPressed(payload.sneaking());
+                context.client().options.sprintKey.setPressed(payload.sprinting());
             });
         });
     }

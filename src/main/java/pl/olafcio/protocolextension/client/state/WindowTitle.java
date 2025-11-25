@@ -19,16 +19,12 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api;
+package pl.olafcio.protocolextension.client.state;
 
-/**
- * An error that's caused by invalid parameters passed to the
- * {@code ProtocolExtensionPacketEventsPlayerManager.Packets.make} function.
- * <p>
- * May be also used in other API implementations.
- */
-public class PacketConstructionError extends RuntimeException {
-    public PacketConstructionError(String e) {
-        super(e);
-    }
+import org.jetbrains.annotations.Nullable;
+
+public enum WindowTitle {
+    ;
+
+    public static @Nullable String text = null;
 }

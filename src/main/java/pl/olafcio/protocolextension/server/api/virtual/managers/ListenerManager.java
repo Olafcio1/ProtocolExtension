@@ -28,7 +28,28 @@ import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionListener
 
 public interface ListenerManager {
     //#region Registration
+
+    /**
+     * Registers a listener.
+     * <p>
+     * A listener is a class that implements the {@code ProtocolExtensionListener} interface.<br/>
+     * For example:
+     * <pre>{@code
+     * public class ExamplePXListener implements ProtocolExtensionListener {
+     *     public void onKeyPressed(Player player, int key) {
+     *         if (key == 72) {
+     *             player.sendMessage(Component.text("You pressed H!"));
+     *         }
+     *     }
+     * }
+     * }</pre>
+     */
+    // TODO: Key constants server-side
     void registerListener(ProtocolExtensionListener listener);
+
+    /**
+     * Unregisters a listener.
+     */
     boolean unregisterListener(ProtocolExtensionListener listener);
 
     //#region Dispatching events

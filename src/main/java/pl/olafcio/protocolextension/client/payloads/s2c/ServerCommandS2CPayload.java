@@ -27,13 +27,14 @@ import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
-public record DeleteHUDElementS2CPayload(short id) implements CustomPayload {
-    public static final Identifier ID_RAW = Identifier.of("protocolextension", "delete-hud");
+public record ServerCommandS2CPayload(boolean sneaking, boolean sprinting) implements CustomPayload {
+    public static final Identifier ID_RAW = Identifier.of("protocolextension", "server-command");
 
-    public static final Id<DeleteHUDElementS2CPayload> ID = new Id<>(ID_RAW);
-    public static final PacketCodec<RegistryByteBuf, DeleteHUDElementS2CPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.SHORT, DeleteHUDElementS2CPayload::id,
-            DeleteHUDElementS2CPayload::new
+    public static final Id<ServerCommandS2CPayload> ID = new Id<>(ID_RAW);
+    public static final PacketCodec<RegistryByteBuf, ServerCommandS2CPayload> CODEC = PacketCodec.tuple(
+            PacketCodecs.BOOLEAN, ServerCommandS2CPayload::sneaking,
+            PacketCodecs.BOOLEAN, ServerCommandS2CPayload::sprinting,
+            ServerCommandS2CPayload::new
     );
 
     @Override

@@ -31,8 +31,46 @@ public interface PlayerManager {
      */
     void activate(Player player);
 
-    // TODO: write documentation
+    /**
+     * Forces the HUD visibility state onto the client.
+     */
     void forceHUD(Player player, boolean state);
+
+    /**
+     * Adds or modifies a HUD element of the given ID in the client.
+     */
     void putHUD(Player player, short id, double x, double y, Component text);
+
+    /**
+     * Deletes a HUD element of the given ID in the client.
+     */
     void deleteHUD(Player player, short id);
+
+    /**
+     * Deletes all HUD elements in the client.
+     */
+    void clearHUD(Player player);
+
+    /**
+     * Sets the window title in the client.
+     * <p>
+     * Due to security reasons, there is text prepended to the `text` parameter, for example:
+     * <pre>{@code
+     * @EventHandler
+     * public void onPlayerJoin(PlayerJoinEvent event) {
+     *     ProtocolExtension.getAPI().setWindowTitle(event.getPlayer(), Component.text("Boss fight"));
+     * }
+     * }</pre>
+     *
+     * may result in the following text:
+     * <pre>{@code
+     * Minecraft* 1.21.10 - Localhost - Boss fight
+     * }</pre>
+     */
+    void setWindowTitle(Player player, Component text);
+
+    /**
+     * Forces a sneaking state & sprinting state onto the client.
+     */
+    void serverCommand(Player player, boolean sneaking, boolean sprinting);
 }

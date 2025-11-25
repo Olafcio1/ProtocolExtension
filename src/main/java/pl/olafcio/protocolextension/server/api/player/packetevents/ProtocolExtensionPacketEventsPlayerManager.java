@@ -29,6 +29,8 @@ import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyCompon
 import io.netty.buffer.Unpooled;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import pl.olafcio.protocolextension.server.api.PacketConstructionError;
 import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
@@ -37,7 +39,8 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     public enum Packets {
         ;
 
-        public static PacketWrapper<?> make(String type, Object... codec) {
+        @Contract("_, _ -> new")
+        public static @NotNull PacketWrapper<?> make(String type, @NotNull Object... codec) {
             var buf = new PacketWrapper<>(0);
             buf.setBuffer(Unpooled.buffer());
 
@@ -90,6 +93,27 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
                     id
             ));
         }
+
+        public static void clearHUD(User player) {
+            player.sendPacket(Packets.make(
+                    "protocolextension:clear-hud"
+            ));
+        }
+
+        public static void setWindowTitle(User player, Component text) {
+            player.sendPacket(Packets.make(
+                    "protocolextension:set-window-title",
+                    LegacyComponentSerializer.legacySection().serialize(text)
+            ));
+        }
+
+        public static void serverCommand(User player, boolean sneaking, boolean sprinting) {
+            player.sendPacket(Packets.make(
+                    "protocolextension:server-command",
+                    sneaking,
+                    sprinting
+            ));
+        }
     }
 
     //#region Player methods
@@ -111,5 +135,20 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     @Override
     public void deleteHUD(Player player, short id) {
         UserMethods.deleteHUD(PacketEvents.getAPI().getPlayerManager().getUser(player), id);
+    }
+
+    @Override
+    public void clearHUD(Player player) {
+        UserMethods.clearHUD(PacketEvents.getAPI().getPlayerManager().getUser(player));
+    }
+
+    @Override
+    public void setWindowTitle(Player player, Component text) {
+        UserMethods.setWindowTitle(PacketEvents.getAPI().getPlayerManager().getUser(player), text);
+    }
+
+    @Override
+    public void serverCommand(Player player, boolean sneaking, boolean sprinting) {
+        UserMethods.serverCommand(PacketEvents.getAPI().getPlayerManager().getUser(player), sneaking, sprinting);
     }
 }
