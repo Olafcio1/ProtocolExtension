@@ -31,6 +31,8 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import pl.olafcio.protocolextension.both.UIdentifier;
+import pl.olafcio.protocolextension.both.payloads.s2c.*;
 import pl.olafcio.protocolextension.server.api.PacketConstructionError;
 import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
@@ -58,6 +60,11 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
             var data = buf.readRemainingBytes();
             return new WrapperPlayServerPluginMessage(type, data);
         }
+
+        @Contract("_, _ -> new")
+        public static @NotNull PacketWrapper<?> make(UIdentifier uid, @NotNull Object... codec) {
+            return make(uid.toString(), codec);
+        }
     }
 
     //#region User methods
@@ -66,20 +73,20 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
 
         public static void activate(User player) {
             player.sendPacket(Packets.make(
-                    "protocolextension:activate"
+                    ActivateS2CPayload.ID
             ));
         }
 
         public static void forceHUD(User player, boolean state) {
             player.sendPacket(Packets.make(
-                    "protocolextension:toggle-hud",
+                    HUDToggleS2CPayload.ID,
                     state
             ));
         }
 
         public static void putHUD(User player, short id, double x, double y, Component text) {
             player.sendPacket(Packets.make(
-                    "protocolextension:put-hud",
+                    HUDPutElementS2CPayload.ID,
                     id,
                     x,
                     y,
@@ -89,29 +96,43 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
 
         public static void deleteHUD(User player, short id) {
             player.sendPacket(Packets.make(
-                    "protocolextension:delete-hud",
+                    HUDDeleteElementS2CPayload.ID,
                     id
             ));
         }
 
         public static void clearHUD(User player) {
             player.sendPacket(Packets.make(
-                    "protocolextension:clear-hud"
+                    HUDClearS2CPayload.ID
             ));
         }
 
         public static void setWindowTitle(User player, Component text) {
             player.sendPacket(Packets.make(
-                    "protocolextension:set-window-title",
+                    SetWindowTitleS2CPayload.ID,
                     LegacyComponentSerializer.legacySection().serialize(text)
             ));
         }
 
         public static void serverCommand(User player, boolean sneaking, boolean sprinting) {
             player.sendPacket(Packets.make(
-                    "protocolextension:server-command",
+                    ServerCommandS2CPayload.ID,
                     sneaking,
                     sprinting
+            ));
+        }
+
+        public static void moveToggle(User player, boolean state) {
+            player.sendPacket(Packets.make(
+                    MoveToggleS2CPayload.ID,
+                    state
+            ));
+        }
+
+        public static void toggleHotbarHUD(User player, boolean state) {
+            player.sendPacket(Packets.make(
+                    HUDSettingHotbarS2CPayload.ID,
+                    state
             ));
         }
     }
@@ -150,5 +171,15 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     @Override
     public void serverCommand(Player player, boolean sneaking, boolean sprinting) {
         UserMethods.serverCommand(PacketEvents.getAPI().getPlayerManager().getUser(player), sneaking, sprinting);
+    }
+
+    @Override
+    public void moveToggle(Player player, boolean state) {
+        UserMethods.moveToggle(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
+    }
+
+    @Override
+    public void toggleHotbarHUD(Player player, boolean state) {
+        UserMethods.toggleHotbarHUD(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
     }
 }

@@ -54,4 +54,10 @@ public class IngameHudMixin {
             );
         }
     }
+
+    @Inject(at = @At("HEAD"), method = "renderHotbar", cancellable = true)
+    private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+        if (!HudState.hotbar)
+            ci.cancel();
+    }
 }

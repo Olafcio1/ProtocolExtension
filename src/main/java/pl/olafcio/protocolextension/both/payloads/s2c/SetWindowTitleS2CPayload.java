@@ -19,20 +19,10 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.both;
+package pl.olafcio.protocolextension.both.payloads.s2c;
 
-import org.jetbrains.annotations.Range;
+import pl.olafcio.protocolextension.both.UIdentifier;
 
-/**
- * Specifies a 2D position.
- */
-public record Position(
-        @Range(from = 0, to = 1) double x,
-        @Range(from = 0, to = 1) double y
-) {
-    public static final Position ZERO = new Position(0, 0);
-
-    public boolean isWithin(double x, double y, double width, double height) {
-        return this.x >= x && this.y >= y && this.x <= x + width && this.y <= y + height;
-    }
+public record SetWindowTitleS2CPayload(String title) {
+    public static UIdentifier ID = new UIdentifier("protocolextension", "set-window-title");
 }
