@@ -19,20 +19,25 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.both;
+package pl.olafcio.protocolextension.server.main;
 
-import org.jetbrains.annotations.Range;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Specifies a 2D position.
- */
-public record Position(
-        @Range(from = 0, to = 1) double x,
-        @Range(from = 0, to = 1) double y
-) {
-    public static final Position ZERO = new Position(0, 0);
+import java.util.function.Predicate;
 
-    public boolean isWithin(double x, double y, double width, double height) {
-        return this.x >= x && this.y >= y && this.x <= x + width && this.y <= y + height;
+@ApiStatus.NonExtendable
+public interface TMultiversion {
+    /**
+     * Marks a command as restricted, which shows a specific pop-up in newer versions of Minecraft
+     * when an object tries to execute a command as you, e.g. a sign.
+     */
+    default Predicate<CommandSourceStack> restricted(Predicate<CommandSourceStack> predicate) {
+        try {
+            return Commands.restricted(predicate);
+        } catch (NoSuchMethodError e) {
+            return predicate;
+        }
     }
 }

@@ -29,4 +29,5 @@ public enum HudState {
     ;
 
     public static final HashMap<Short, @NotNull HudElement> elements = new HashMap<>();
+    public static boolean hotbar = true;
 }

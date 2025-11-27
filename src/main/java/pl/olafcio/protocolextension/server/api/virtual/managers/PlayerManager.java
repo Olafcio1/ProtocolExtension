@@ -24,10 +24,15 @@ package pl.olafcio.protocolextension.server.api.virtual.managers;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
+/**
+ * Contains methods used to send specific PX payloads to players.
+ * Everything takes effect until disconnected, but it may also be reverted
+ * on a world change in a future release.
+ */
 public interface PlayerManager {
     /**
      * Used to enable ProtocolExtension support in the client.
-     * Should be called only once.
+     * Should be called internally.
      */
     void activate(Player player);
 
@@ -52,6 +57,11 @@ public interface PlayerManager {
     void clearHUD(Player player);
 
     /**
+     * Forces the hotbar visibility onto the client.
+     */
+    void toggleHotbarHUD(Player player, boolean state);
+
+    /**
      * Sets the window title in the client.
      * <p>
      * Due to security reasons, there is text prepended to the `text` parameter, for example:
@@ -73,4 +83,12 @@ public interface PlayerManager {
      * Forces a sneaking state & sprinting state onto the client.
      */
     void serverCommand(Player player, boolean sneaking, boolean sprinting);
+
+    /**
+     * Toggles whether the client can tick movement logic.
+     * <p>
+     * <b>Warning:</b> Might cause disconnects (did) for flying or anticheat detections.
+     */
+    // TODO: Should I set {@code player.flying = true} before executing any handlers?
+    void moveToggle(Player player, boolean state);
 }

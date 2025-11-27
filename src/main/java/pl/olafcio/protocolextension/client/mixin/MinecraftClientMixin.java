@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
+import pl.olafcio.protocolextension.client.state.MoveState;
 import pl.olafcio.protocolextension.client.state.WindowTitle;
 import pl.olafcio.protocolextension.client.state.hud.HudState;
 
@@ -48,15 +49,17 @@ public abstract class MinecraftClientMixin {
         Main.mc = (MinecraftClient) (Object) this;
     }
 
-    @Inject(at = @At("RETURN"), method = "getWindowTitle", cancellable = true)
+    @Inject(at = @At("RETURN"), method = "getWindowTitle", cancellable = true, order = 1001)
     public void getWindowTitle(CallbackInfoReturnable<String> cir) {
+        // Choosing this implementation over more optimized solutions,
+        // because other mods can change the title too.
         if (WindowTitle.text != null) {
             var server = getCurrentServerEntry();
             assert server != null;
 
             var original = cir.getReturnValue();
             var string =
-                    original.split("-", 2)[0] +
+                    original.split(" -", 2)[0] +
                     " - " +
                     StringUtils.capitalize(server.name) +
                     " - " +
@@ -69,8 +72,11 @@ public abstract class MinecraftClientMixin {
     @Inject(at = @At("HEAD"), method = "onDisconnected")
     public void onDisconnected(CallbackInfo ci) {
         NetworkUtil.enabled = false;
+
+        MoveState.value = true;
         WindowTitle.text = null;
 
+        HudState.hotbar = true;
         HudState.elements.clear();
     }
 }

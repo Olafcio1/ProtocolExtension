@@ -19,20 +19,25 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.both;
+package pl.olafcio.protocolextension.client.payloads.s2c;
 
-import org.jetbrains.annotations.Range;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.util.Identifier;
 
-/**
- * Specifies a 2D position.
- */
-public record Position(
-        @Range(from = 0, to = 1) double x,
-        @Range(from = 0, to = 1) double y
-) {
-    public static final Position ZERO = new Position(0, 0);
+public record HUDDeleteElementS2CPayload(short id) implements CustomPayload {
+    public static final Identifier ID_RAW = Identifier.of("protocolextension", "delete-hud");
 
-    public boolean isWithin(double x, double y, double width, double height) {
-        return this.x >= x && this.y >= y && this.x <= x + width && this.y <= y + height;
+    public static final Id<HUDDeleteElementS2CPayload> ID = new Id<>(ID_RAW);
+    public static final PacketCodec<RegistryByteBuf, HUDDeleteElementS2CPayload> CODEC = PacketCodec.tuple(
+            PacketCodecs.SHORT, HUDDeleteElementS2CPayload::id,
+            HUDDeleteElementS2CPayload::new
+    );
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return ID;
     }
 }
