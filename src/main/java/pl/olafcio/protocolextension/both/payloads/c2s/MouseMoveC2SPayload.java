@@ -19,25 +19,10 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.client.payloads.s2c;
+package pl.olafcio.protocolextension.both.payloads.c2s;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record HUDToggleS2CPayload(boolean state) implements CustomPayload {
-    public static final Identifier ID_RAW = Identifier.of("protocolextension", "toggle-hud");
-
-    public static final CustomPayload.Id<HUDToggleS2CPayload> ID = new CustomPayload.Id<>(ID_RAW);
-    public static final PacketCodec<RegistryByteBuf, HUDToggleS2CPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOLEAN, HUDToggleS2CPayload::state,
-            HUDToggleS2CPayload::new
-    );
-
-    @Override
-    public CustomPayload.Id<? extends CustomPayload> getId() {
-        return ID;
-    }
+public record MouseMoveC2SPayload(double x, double y) {
+    public static UIdentifier ID = new UIdentifier("protocolextension", "mouse-move");
 }

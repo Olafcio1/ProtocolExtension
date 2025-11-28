@@ -19,25 +19,9 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.client.payloads.s2c;
+package pl.olafcio.protocolextension.client.payload.func;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
-public record HUDSettingHotbarS2CPayload(boolean shown) implements CustomPayload {
-    public static final Identifier ID_RAW = Identifier.of("protocolextension", "toggle-hotbar-hud");
-
-    public static final Id<HUDSettingHotbarS2CPayload> ID = new Id<>(ID_RAW);
-    public static final PacketCodec<RegistryByteBuf, HUDSettingHotbarS2CPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOLEAN, HUDSettingHotbarS2CPayload::shown,
-            HUDSettingHotbarS2CPayload::new
-    );
-
-    @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
-    }
+@FunctionalInterface
+public interface VarFunction<T> {
+    T apply(Object... varargs);
 }
