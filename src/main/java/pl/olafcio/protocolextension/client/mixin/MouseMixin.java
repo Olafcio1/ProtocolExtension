@@ -28,9 +28,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import pl.olafcio.protocolextension.both.payloads.c2s.MouseMoveC2SPayload;
 import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
-import pl.olafcio.protocolextension.client.payloads.c2s.MouseMoveC2SPayload;
+import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
 @Mixin(Mouse.class)
 public class MouseMixin {
@@ -42,7 +43,7 @@ public class MouseMixin {
                 screen != null &&
                 !(screen instanceof GameMenuScreen)
         ) {
-            NetworkUtil.send(new MouseMoveC2SPayload(
+            NetworkUtil.send(PayloadRegistry.get(MouseMoveC2SPayload.class).create(
                     x / (double)Main.mc.getWindow().getScaledWidth(),
                     y / (double)Main.mc.getWindow().getScaledHeight()
             ));

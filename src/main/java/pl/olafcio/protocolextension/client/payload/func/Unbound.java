@@ -19,25 +19,20 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.client.payloads.s2c;
+package pl.olafcio.protocolextension.client.payload.func;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.function.Function;
 
-public record MoveToggleS2CPayload(boolean canMove) implements CustomPayload {
-    public static final Identifier ID_RAW = Identifier.of("protocolextension", "move-toggle");
-
-    public static final Id<MoveToggleS2CPayload> ID = new Id<>(ID_RAW);
-    public static final PacketCodec<RegistryByteBuf, MoveToggleS2CPayload> CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOLEAN, MoveToggleS2CPayload::canMove,
-            MoveToggleS2CPayload::new
-    );
-
+public record Unbound<T>(Method method) implements Function<T, Object> {
     @Override
-    public Id<? extends CustomPayload> getId() {
-        return ID;
+    @SuppressWarnings("unchecked")
+    public T apply(Object o) {
+        try {
+            return (T) this.method.invoke(o);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to apply unbound", e);
+        }
     }
 }

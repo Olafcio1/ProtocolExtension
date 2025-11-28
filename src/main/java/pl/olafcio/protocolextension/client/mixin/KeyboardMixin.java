@@ -28,9 +28,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import pl.olafcio.protocolextension.both.payloads.c2s.KeyPressedC2SPayload;
 import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
-import pl.olafcio.protocolextension.client.payloads.c2s.KeyPressedC2SPayload;
+import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
@@ -49,7 +50,7 @@ public class KeyboardMixin {
 //                !input.hasShift() &&
                 Main.mc.currentScreen == null
         ) {
-            NetworkUtil.send(new KeyPressedC2SPayload(input.key()));
+            NetworkUtil.send(PayloadRegistry.get(KeyPressedC2SPayload.class).create(input.key()));
         }
     }
 }
