@@ -22,6 +22,16 @@
 package pl.olafcio.protocolextension.client;
 
 import com.mojang.datafixers.util.*;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.modifier.FieldManifestation;
+import net.bytebuddy.description.modifier.TypeManifestation;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.implementation.FieldAccessor;
+import net.bytebuddy.implementation.FixedValue;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+import net.bytebuddy.matcher.ElementMatchers;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -45,14 +55,14 @@ import pl.olafcio.protocolextension.client.state.WindowTitle;
 import pl.olafcio.protocolextension.client.state.hud.HudElement;
 import pl.olafcio.protocolextension.client.state.hud.HudState;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+
+import static net.bytebuddy.jar.asm.Opcodes.*;
 
 public class Main implements ModInitializer, ClientModInitializer {
     public static MinecraftClient mc;
@@ -94,17 +104,44 @@ public class Main implements ModInitializer, ClientModInitializer {
         }
     }
 
+    private static final HashMap<String, Integer> TYPE_MAP = new HashMap<>(){{
+        this.put(int.class.getName(), ILOAD);
+        this.put(boolean.class.getName(), ILOAD);
+        this.put(byte.class.getName(), ILOAD);
+        this.put(short.class.getName(), ILOAD);
+        this.put(char.class.getName(), ILOAD);
+
+        this.put(long.class.getName(), LLOAD);
+        this.put(float.class.getName(), FLOAD);
+        this.put(double.class.getName(), DLOAD);
+    }};
+
     @SuppressWarnings("unchecked")
     private <T extends Record> PayloadRecord<?> addPacket(Class<T> record, UIdentifier uid) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        PacketCodec<RegistryByteBuf, T> codec;
+        var id = Identifier.of(uid.namespace(), uid.path());
+        var cpID = new CustomPayload.Id<>(id);
+
+        PacketCodec<Object, ?> codec;
+
+        var constructor = record.getDeclaredConstructors()[0];
+        var types = constructor.getParameterTypes();
 
         var values = record.getRecordComponents();
+
+        var wrapper = customPayload(cpID, values, types);
+        var wrapperCo = wrapper.getDeclaredConstructor(types);
+
         if (values.length >= 1) {
+            var valuesW = wrapper.getDeclaredMethods();
+
             var paramTypes = new ArrayList<Class<?>>();
             var paramValues = new ArrayList<>();
-            for (var fComponent : values) {
-                var fCodec = getPacketCodec(fComponent.getType());
-                var fFunction = new Unbound(fComponent.getAccessor());
+            for (var fComponent : valuesW) {
+                if (fComponent.getName().equals("getId"))
+                    continue;
+
+                var fCodec = getPacketCodec(fComponent.getReturnType());
+                var fFunction = new Unbound(fComponent);
 
                 paramTypes.add(PacketCodec.class);
                 paramTypes.add(Function.class);
@@ -113,28 +150,91 @@ public class Main implements ModInitializer, ClientModInitializer {
                 paramValues.add(fFunction);
             }
 
-            passConstructor(record.getDeclaredConstructors()[0], paramTypes, paramValues);
+            passConstructor(wrapperCo, paramTypes, paramValues);
 
             var method = getMethod(paramTypes);
             var args = paramValues.toArray(Object[]::new);
 
-            codec = (PacketCodec<RegistryByteBuf, T>)
+            codec = (PacketCodec<Object, T>)
                     method.invoke(null, args);
         } else {
-            codec = PacketCodec.unit(record.getDeclaredConstructor().newInstance());
+            // TODO: This doesn't require one argument - make an appropriate @SuppressWarnings annotation
+            codec = PacketCodec.unit(wrapperCo.newInstance());
         }
 
-        var id = Identifier.of(uid.namespace(), uid.path());
-        var cpID = new CustomPayload.Id<>(id);
-
-        var pr = new PayloadRecord(cpID, codec);
+        var pr = new PayloadRecord(cpID, codec, types);
         payloads.put(record.getName(), pr);
         return pr;
     }
 
+    private @NotNull Class<?> customPayload(CustomPayload.Id<CustomPayload> cpID, RecordComponent[] values, Class<?>[] types) {
+        DynamicType.Builder<?> builder = new ByteBuddy()
+                .subclass(Object.class)
+                .implement(CustomPayload.class)
+                .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL);
+
+        for (var param : values) {
+            var name = param.getName();
+            var type = param.getType();
+
+            builder = builder
+                    .defineField(name, type, Visibility.PRIVATE, FieldManifestation.FINAL)
+                    .defineMethod(name, type, Visibility.PUBLIC)
+                        .intercept(FieldAccessor.ofField(name));
+        }
+
+        builder = builder.method(ElementMatchers.named("getId"))
+                .intercept(FixedValue.value(cpID));
+
+        if (types.length >= 1) {
+            var wrapperCo = builder.defineConstructor(Modifier.PUBLIC);
+
+            builder = wrapperCo
+                    .withParameters(types)
+                    .intercept(new Implementation.Simple((mv, ctx, method) -> {
+                        int size = 1;
+
+                        // --- call super() ---
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitMethodInsn(INVOKESPECIAL,
+                                "java/lang/Object",
+                                "<init>",
+                                "()V",
+                                false);
+
+                        // --- assignments ---
+                        for (var param : values) {
+                            var type = param.getType();
+                            var typeLoad = TYPE_MAP.getOrDefault(type.getName(), ALOAD);
+
+                            mv.visitVarInsn(ALOAD, 0);
+                            mv.visitVarInsn(typeLoad, size);
+                            mv.visitFieldInsn(PUTFIELD,
+                                    ctx.getInstrumentedType().getInternalName(),
+                                    param.getName(),
+                                    type.descriptorString());
+
+                            if (type == long.class || type == double.class)
+                                size += 2;
+                            else size++;
+                        }
+
+                        mv.visitInsn(RETURN);
+
+                        return new ByteCodeAppender.Size(size, size);
+                    }));
+        }
+
+        return builder
+                .make()
+                .load(getClass().getClassLoader())
+                .getLoaded();
+    }
+
     record PayloadRecord<T extends CustomPayload>(
             CustomPayload.Id<T> cpID,
-            PacketCodec<RegistryByteBuf, T> codec
+            PacketCodec<RegistryByteBuf, T> codec,
+            Class<?>[] types
     ) {
         public void registerS2C() {
             PayloadTypeRegistry.playS2C().register(cpID, codec);
@@ -230,12 +330,39 @@ public class Main implements ModInitializer, ClientModInitializer {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends Record> void handleS2C(Class<T> packet, BiConsumer<T, ClientPlayNetworking.Context> handler) {
-        var pr = payloads.get(packet.getName());
-        ClientPlayNetworking.registerGlobalReceiver(pr.cpID, (payload, context) -> {
-            context.client().execute(() -> handler.accept((T) payload, context));
-        });
+    private <T> void handleS2C(Class<T> packet, BiConsumer<T, ClientPlayNetworking.Context> handler) {
+        try {
+            var pr = payloads.get(packet.getName());
+            var prCo = packet.getDeclaredConstructor(pr.types);
+            var params = prCo.getParameters();
+
+            ClientPlayNetworking.registerGlobalReceiver(pr.cpID, (payload, context) -> {
+                var provide = new Object[params.length];
+
+                try {
+                    var i = 0;
+                    for (var param : params) {
+                        var method = payload.getClass().getDeclaredMethod(param.getName());
+                        var value = method.invoke(payload);
+
+                        provide[i++] = value;
+                    }
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Failed to scan S2C packet", e);
+                }
+
+                T transformed;
+                try {
+                    transformed = prCo.newInstance(provide);
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Failed to type S2C packet", e);
+                }
+
+                context.client().execute(() -> handler.accept(transformed, context));
+            });
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to register a S2C packet handler", e);
+        }
     }
 
     @Override

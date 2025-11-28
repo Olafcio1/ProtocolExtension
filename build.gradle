@@ -50,6 +50,7 @@ dependencies {
 
     // Dependencies
     implementation 'com.github.MatrixCreations:MatrixColorAPI:v1.0.7'
+    implementation 'net.bytebuddy:byte-buddy:1.18.2'
 }
 
 processResources {
