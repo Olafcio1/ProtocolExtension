@@ -44,8 +44,8 @@ public class MouseMixin {
                 !(screen instanceof GameMenuScreen)
         ) {
             NetworkUtil.send(PayloadRegistry.get(MouseMoveC2SPayload.class).create(
-                    x / (double)Main.mc.getWindow().getScaledWidth(),
-                    y / (double)Main.mc.getWindow().getScaledHeight()
+                    x / (double)Main.mc.getWindow().getWidth(),
+                    y / (double)Main.mc.getWindow().getHeight()
             ));
         }
     }

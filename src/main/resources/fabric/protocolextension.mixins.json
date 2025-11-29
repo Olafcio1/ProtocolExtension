@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "ClientConfigurationNetworkHandlerMixin",
+    "ClientPlayNetworkHandlerMixin",
     "ClientPlayerEntityMixin",
     "IngameHudMixin",
     "KeyboardMixin",

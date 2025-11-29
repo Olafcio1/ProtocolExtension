@@ -24,7 +24,6 @@ package pl.olafcio.protocolextension.client.payload.util;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import org.jetbrains.annotations.NotNull;
-import pl.olafcio.protocolextension.client.Main;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -65,7 +64,6 @@ public enum CodecUtil {
         if (method == null)
             throw new RuntimeException("Couldn't construct PX packet: failed to retrieve appropriate tuple(...) variant");
 
-        Main.logger.info("Found {}", method);
         return method;
     }
 }

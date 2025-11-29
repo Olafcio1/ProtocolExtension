@@ -23,26 +23,29 @@ package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientCommonNetworkHandler;
-import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.client.network.ClientConnectionState;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
-import net.minecraft.network.packet.s2c.config.ReadyS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
+import pl.olafcio.protocolextension.client.NetworkUtil;
 import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
-@Mixin(ClientConfigurationNetworkHandler.class)
-public abstract class ClientConfigurationNetworkHandlerMixin extends ClientCommonNetworkHandler {
-    protected ClientConfigurationNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, ClientConnectionState connectionState) {
+@Mixin(ClientPlayNetworkHandler.class)
+public abstract class ClientPlayNetworkHandlerMixin extends ClientCommonNetworkHandler {
+    protected ClientPlayNetworkHandlerMixin(MinecraftClient client, ClientConnection connection, ClientConnectionState connectionState) {
         super(client, connection, connectionState);
     }
 
-    @Inject(at = @At("TAIL"), method = "onReady")
-    public void onReady(ReadyS2CPacket packet, CallbackInfo ci) {
+    @Inject(at = @At("TAIL"), method = "onGameJoin")
+    public void onGameJoin(GameJoinS2CPacket packet, CallbackInfo ci) {
+        NetworkUtil.reset();
+
         this.sendPacket(new CustomPayloadC2SPacket(
                 PayloadRegistry.get(ActivatePayload.class).create()
         ));

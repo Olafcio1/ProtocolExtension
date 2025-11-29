@@ -23,10 +23,12 @@ package pl.olafcio.protocolextension.server.api.player.packetevents;
 
 import com.github.retrooper.packetevents.event.PacketListener;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.event.UserLoginEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
 import io.netty.buffer.Unpooled;
+import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
+import pl.olafcio.protocolextension.both.payloads.c2s.KeyPressedC2SPayload;
+import pl.olafcio.protocolextension.both.payloads.c2s.MouseMoveC2SPayload;
 import pl.olafcio.protocolextension.server.ProtocolExtension;
 
 public class ProtocolExtensionPacketEventsPacketListener implements PacketListener {
@@ -36,11 +38,11 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
             var wrapper = new WrapperPlayClientPluginMessage(event);
             var channel = wrapper.getChannelName();
 
-            if (channel.equals("protocolextension:activate")) {
+            if (channel.equals(ActivatePayload.ID.toString())) {
                 ProtocolExtension.getAPI().playerManager().activate(
                         event.getPlayer()
                 );
-            } else if (channel.equals("protocolextension:key-pressed")) {
+            } else if (channel.equals(KeyPressedC2SPayload.ID.toString())) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
 
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(
@@ -53,7 +55,7 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
                                 data.readInt()
                         }
                 );
-            } else if (channel.equals("protocolextension:mouse-move")) {
+            } else if (channel.equals(MouseMoveC2SPayload.ID.toString())) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
 
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(

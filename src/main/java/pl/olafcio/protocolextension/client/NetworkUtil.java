@@ -23,6 +23,9 @@ package pl.olafcio.protocolextension.client;
 
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import pl.olafcio.protocolextension.client.state.MoveState;
+import pl.olafcio.protocolextension.client.state.WindowTitle;
+import pl.olafcio.protocolextension.client.state.hud.HudState;
 
 public enum NetworkUtil {
     ;
@@ -31,5 +34,15 @@ public enum NetworkUtil {
     public static void send(CustomPayload payload) {
         if (enabled)
             Main.mc.player.networkHandler.sendPacket(new CustomPayloadC2SPacket(payload));
+    }
+
+    public static void reset() {
+        enabled = false;
+
+        MoveState.value = true;
+        WindowTitle.text = null;
+
+        HudState.hotbar = true;
+        HudState.elements.clear();
     }
 }

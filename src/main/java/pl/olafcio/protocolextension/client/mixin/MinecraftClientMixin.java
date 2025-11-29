@@ -34,9 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
-import pl.olafcio.protocolextension.client.state.MoveState;
 import pl.olafcio.protocolextension.client.state.WindowTitle;
-import pl.olafcio.protocolextension.client.state.hud.HudState;
 
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
@@ -71,12 +69,6 @@ public abstract class MinecraftClientMixin {
 
     @Inject(at = @At("HEAD"), method = "onDisconnected")
     public void onDisconnected(CallbackInfo ci) {
-        NetworkUtil.enabled = false;
-
-        MoveState.value = true;
-        WindowTitle.text = null;
-
-        HudState.hotbar = true;
-        HudState.elements.clear();
+        NetworkUtil.reset();
     }
 }
