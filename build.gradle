@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.13.6'
     id 'maven-publish'
+    id 'com.modrinth.minotaur' version "2.+"
 }
 
 version = project.mod_version
@@ -9,7 +10,6 @@ group = project.maven_group
 base {
     archivesName = project.archives_base_name
 }
-
 
 fabricApi {
     configureDataGeneration {
@@ -53,6 +53,12 @@ dependencies {
     implementation 'net.bytebuddy:byte-buddy:1.18.2'
 }
 
+void expandFile(FileCopyDetails it) {
+    it.expand "version": project.version,
+              "minecraft_version": project.minecraft_version,
+              "loader_version": project.loader_version
+}
+
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
@@ -60,9 +66,11 @@ processResources {
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+        expandFile(it)
+    }
+
+    filesMatching("paper-plugin.yml") {
+        expandFile(it)
     }
 }
 
@@ -73,9 +81,8 @@ tasks.withType(JavaCompile).configureEach {
     // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
     // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible())
         it.options.release.set(targetJavaVersion)
-    }
 }
 
 java {
@@ -86,9 +93,71 @@ java {
     withSourcesJar()
 }
 
+private void nextVersion() {
+    // Read the file
+    def file = file("gradle.properties");
+    def data = new String(file.newDataInputStream().readAllBytes())
+
+    // Update it
+    def newVersion = Integer.parseInt((String) version) + 1
+    data = data.replace(
+            "mod_version=" + version,
+            "mod_version=" + newVersion
+    )
+
+    // Write it
+    def writer = file.newWriter()
+    writer.write(data)
+    writer.flush()
+}
+
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+private static String gitChangelog() {
+    return new ProcessBuilder()
+            .command("git", "log", "-1", "--pretty=%B")
+            .start()
+    .inputStream.getText("UTF-8")
+}
+
+import com.modrinth.minotaur.TaskModrinthUpload
+def m2 = tasks.register("Modrinth", TaskModrinthUpload) {
+    it.dependsOn(tasks.named("modrinth"), remapJar)
+    it.doFirst {
+        modrinth {
+            loaders = ["paper"]
+            dependencies {
+                required.project "packetevents"
+            }
+        }
+    }
+
+    it.doLast {
+        nextVersion()
+    }
+}
+
+tasks.modrinth {
+    finalizedBy(m2)
+}
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "protocolextension"
+    versionNumber = "${version}"
+    versionType = "release"
+    versionName = "ProtocolExtension stable-${version}-ml"
+    changelog = gitChangelog()
+    uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
+    gameVersions = [minecraft_version].toList()
+
+    loaders = ["fabric"]
+    dependencies {
+        required.project "fabric-api"
     }
 }
 

@@ -23,6 +23,10 @@ package pl.olafcio.protocolextension.both.payloads.c2s;
 
 import pl.olafcio.protocolextension.both.UIdentifier;
 
+/**
+ * To recognize the key, use {@code KeyConstants.from}.
+ * @param key The pressed keycode.
+ */
 public record KeyPressedC2SPayload(int key) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "key-pressed");
 }

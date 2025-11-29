@@ -21,16 +21,19 @@ This makes it easier for both the servers, and the players, as it is a universal
 | Name                       | Brief                                                            | Version |
 |----------------------------|------------------------------------------------------------------|---------|
 | **[Serverbound]**          |                                                                  |         |
+| ActivatePayload            | Sent first when the client supports PX.                          | v0.3    |
 | KeyPressedC2SPayload       | Sent when the client presses a key in-game.                      | v0.1    |
 | MouseMoveC2SPayload        | Sent when the client moves the mouse in a screen.                | v0.1    |
 | **[Clientbound]**          |                                                                  |         |
-| ActivateS2CPayload         | Received when the server supports PX packets.                    | v0.1    |
-| ClearHUDS2CPayload         | Clears all previously created HUD elements by the server.        | v0.2    |
-| DeleteHUDElementS2CPayload | Deletes a HUD element previously created by the server.          | v0.1    |
-| PutHUDElementS2CPayload    | Adds or modifies a HUD element previously created by the server. | v0.1    |
+| ActivatePayload            | Sent back when the server supports PX too.                       | v0.2    |
+| HUDClearS2CPayload         | Clears all previously created HUD elements by the server.        | v0.2    |
+| HUDDeleteElementS2CPayload | Deletes a HUD element previously created by the server.          | v0.1    |
+| HUDPutElementS2CPayload    | Adds or modifies a HUD element previously created by the server. | v0.1    |
+| HUDSettingHotbarS2CPayload | Toggle the hotbar visibility.                                    | v0.3    |
+| HUDToggleS2CPayload        | Toggles HUD visibility.                                          | v0.1    |
+| MoveToggleS2CPayload       | Toggles movement ticking logic.                                  | v0.3    |
 | ServerCommandS2CPayload    | Sets the player's sneaking and sprinting states.                 | v0.2    |
 | SetWindowTitleS2CPayload   | Changes the player's window title.                               | v0.2    |
-| ToggleHUDS2CPayload        | Toggles HUD visibility.                                          | v0.0    |
 
 ## 🎐 Quickstart
 To start developing with ProtocolExtension, first you need to have a Java IDE installed. I provide support only for IntelliJ IDEA.

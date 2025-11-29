@@ -3,9 +3,9 @@ description: The perfect solution for adding custom content onto your server!
 authors:
   - Olafcio
 website: https://olafcio1.github.io
-version: '1.0'
+version: "${version}"
 main: pl.olafcio.protocolextension.server.ProtocolExtension
-api-version: '1.21.10'
+api-version: "${minecraft_version}"
 load: STARTUP
 dependencies:
   server:
