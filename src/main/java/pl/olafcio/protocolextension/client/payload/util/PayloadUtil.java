@@ -39,7 +39,7 @@ import java.lang.reflect.RecordComponent;
 public enum PayloadUtil {
     ;
 
-    public static @NotNull Class<?> customPayload(CustomPayload.Id<CustomPayload> cpID, RecordComponent[] values, Class<?>[] types) {
+    public static @NotNull Class<?> customPayload(CustomPayload.Id<? extends CustomPayload> cpID, RecordComponent[] values, Class<?>[] types) {
         DynamicType.Builder<?> builder = new ByteBuddy()
                 .subclass(Object.class)
                 .implement(CustomPayload.class)

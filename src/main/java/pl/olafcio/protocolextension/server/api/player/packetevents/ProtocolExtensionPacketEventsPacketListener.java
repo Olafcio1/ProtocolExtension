@@ -36,7 +36,11 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
             var wrapper = new WrapperPlayClientPluginMessage(event);
             var channel = wrapper.getChannelName();
 
-            if (channel.equals("protocolextension:key-pressed")) {
+            if (channel.equals("protocolextension:activate")) {
+                ProtocolExtension.getAPI().playerManager().activate(
+                        event.getPlayer()
+                );
+            } else if (channel.equals("protocolextension:key-pressed")) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
 
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(

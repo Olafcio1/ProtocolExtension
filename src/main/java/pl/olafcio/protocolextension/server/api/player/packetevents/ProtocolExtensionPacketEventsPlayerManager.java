@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import pl.olafcio.protocolextension.both.UIdentifier;
+import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
 import pl.olafcio.protocolextension.both.payloads.s2c.*;
 import pl.olafcio.protocolextension.server.api.PacketConstructionError;
 import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
@@ -73,7 +74,7 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
 
         public static void activate(User player) {
             player.sendPacket(Packets.make(
-                    ActivateS2CPayload.ID
+                    ActivatePayload.ID
             ));
         }
 

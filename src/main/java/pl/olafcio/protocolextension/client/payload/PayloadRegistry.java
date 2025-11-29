@@ -32,6 +32,7 @@ import pl.olafcio.protocolextension.client.payload.util.CodecUtil;
 import pl.olafcio.protocolextension.client.payload.util.ConstructorUtil;
 import pl.olafcio.protocolextension.client.payload.util.PayloadUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,11 +48,11 @@ public final class PayloadRegistry {
     private static final HashMap<String, PayloadRecord<?>> payloads = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    public static <T extends Record> PayloadRecord<?> add(Class<T> record, UIdentifier uid) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public static <T extends Record, G extends CustomPayload> PayloadRecord<?> add(Class<T> record, UIdentifier uid) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         var id = Identifier.of(uid.namespace(), uid.path());
-        var cpID = new CustomPayload.Id<>(id);
+        var cpID = new CustomPayload.Id<G>(id);
 
-        PacketCodec<RegistryByteBuf, ?> codec;
+        PacketCodec<RegistryByteBuf, G> codec;
 
         var constructor = record.getDeclaredConstructors()[0];
         var types = constructor.getParameterTypes();
@@ -59,7 +60,10 @@ public final class PayloadRegistry {
         var values = record.getRecordComponents();
 
         var wrapper = PayloadUtil.customPayload(cpID, values, types);
-        var wrapperCo = wrapper.getDeclaredConstructor(types);
+        var wrapperCo = (Constructor<G>)
+                        wrapper.getDeclaredConstructor(types);
+
+        G unit = null;
 
         if (values.length >= 1) {
             var valuesW = wrapper.getDeclaredMethods();
@@ -85,14 +89,14 @@ public final class PayloadRegistry {
             var method = CodecUtil.getMethod(paramTypes);
             var args = paramValues.toArray(Object[]::new);
 
-            codec = (PacketCodec<RegistryByteBuf, T>)
+            codec = (PacketCodec<RegistryByteBuf, G>)
                     method.invoke(null, args);
         } else {
             // TODO: This doesn't require any argument - is there a @SuppressWarnings variant for this?
-            codec = PacketCodec.unit(wrapperCo.newInstance());
+            codec = PacketCodec.unit(unit = wrapperCo.newInstance());
         }
 
-        var pr = new PayloadRecord(cpID, codec, types, wrapperCo);
+        var pr = new PayloadRecord<>(cpID, codec, types, wrapperCo, unit);
         payloads.put(record.getName(), pr);
         return pr;
     }
