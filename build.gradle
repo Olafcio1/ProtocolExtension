@@ -1,3 +1,8 @@
+import com.modrinth.minotaur.TaskModrinthUpload
+import java.nio.file.Path
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 plugins {
     id 'fabric-loom' version '1.13.6'
     id 'maven-publish'
@@ -93,9 +98,49 @@ java {
     withSourcesJar()
 }
 
+def bin = Path.of("$projectDir/bin")
+tasks.named("jar") {
+    doFirst {
+        def binFiles = Files.list(bin)
+        for (def bf : binFiles)
+            Files.delete(bin.resolve(bf))
+    }
+}
+
+tasks.named("remapJar") {
+    doLast {
+        Files.copy(
+                Path.of("$projectDir/build/libs/" + remapJar.archiveFileName.get()),
+                bin.resolve("protocolextension-${version}.jar"),
+                StandardCopyOption.REPLACE_EXISTING
+        )
+    }
+}
+
+tasks.named("remapSourcesJar") {
+    doLast {
+        Files.move(
+                Path.of("$projectDir/build/libs/" + remapSourcesJar.archiveFileName.get()),
+                bin.resolve("protocolextension-${version}-api.jar"),
+                StandardCopyOption.REPLACE_EXISTING,
+                StandardCopyOption.ATOMIC_MOVE
+        )
+    }
+}
+
+tasks.named("build") {
+    doLast {
+        new ProcessBuilder()
+                .command("git", "add", "-f", "${projectDir.path}/bin")
+                .inheritIO()
+                .start()
+        .waitFor()
+    }
+}
+
 private void nextVersion() {
     // Read the file
-    def file = file("gradle.properties");
+    def file = file("gradle.properties")
     def data = new String(file.newDataInputStream().readAllBytes())
 
     // Update it
@@ -124,7 +169,6 @@ private static String gitChangelog() {
     .inputStream.getText("UTF-8")
 }
 
-import com.modrinth.minotaur.TaskModrinthUpload
 def m2 = tasks.register("Modrinth", TaskModrinthUpload) {
     it.dependsOn(tasks.named("modrinth"), remapJar)
     it.doFirst {
@@ -138,6 +182,21 @@ def m2 = tasks.register("Modrinth", TaskModrinthUpload) {
 
     it.doLast {
         nextVersion()
+
+        new ProcessBuilder()
+                .command("git", "add", "${projectDir.path}/gradle.properties")
+                .start()
+        .waitFor()
+
+        new ProcessBuilder()
+                .command("git", "commit", "--amend", "--no-edit")
+                .start()
+        .waitFor()
+
+        new ProcessBuilder()
+                .command("git", "push", "--force-with-lease")
+                .start()
+        .waitFor()
     }
 }
 
