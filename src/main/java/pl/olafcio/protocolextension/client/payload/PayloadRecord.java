@@ -34,28 +34,40 @@ public final class PayloadRecord<T extends CustomPayload> {
     public final CustomPayload.Id<T> id;
     public final PacketCodec<RegistryByteBuf, T> codec;
     public final Class<?>[] types;
-    public final Constructor<CustomPayload> constructor;
+    public final Constructor<T> constructor;
+    public final T unit;
 
-    public PayloadRecord(CustomPayload.Id<T> id, PacketCodec<RegistryByteBuf, T> codec, Class<?>[] types, Constructor<CustomPayload> constructor) {
+    public PayloadRecord(
+            CustomPayload.Id<T> id,
+            PacketCodec<RegistryByteBuf, T> codec,
+            Class<?>[] types,
+            Constructor<T> constructor,
+            T unit
+    ) {
         this.id = id;
         this.codec = codec;
         this.types = types;
         this.constructor = constructor;
+        this.unit = unit;
     }
 
-    @SuppressWarnings("unchecked")
     public T create(Object... values) {
         try {
-            return (T) constructor.newInstance(values);
+            if (this.unit == null)
+                return constructor.newInstance(values);
+            else return this.unit;
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException("Failed to create packet", e);
         }
     }
 
-    public void registerS2C() {
+    public PayloadRecord<T> registerS2C() {
         PayloadTypeRegistry.playS2C().register(id, codec);
+        return this;
     }
-    public void registerC2S() {
+
+    public PayloadRecord<T> registerC2S() {
         PayloadTypeRegistry.playC2S().register(id, codec);
+        return this;
     }
 }

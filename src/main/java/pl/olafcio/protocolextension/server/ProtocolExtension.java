@@ -106,7 +106,6 @@ public final class ProtocolExtension
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        api.playerManager().activate(event.getPlayer());
         api.listenerManager().dispatchEvent("onConnect", event, new Class<?>[]{}, new Object[]{});
     }
 

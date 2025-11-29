@@ -27,8 +27,8 @@ import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.olafcio.protocolextension.both.Position;
-import pl.olafcio.protocolextension.both.payloads.c2s.KeyPressedC2SPayload;
-import pl.olafcio.protocolextension.both.payloads.c2s.MouseMoveC2SPayload;
+import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
+import pl.olafcio.protocolextension.both.payloads.c2s.*;
 import pl.olafcio.protocolextension.both.payloads.s2c.*;
 import pl.olafcio.protocolextension.client.payload.*;
 import pl.olafcio.protocolextension.client.state.MoveState;
@@ -48,6 +48,12 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         // C2S
         try {
+            PayloadRegistry.add(ActivatePayload.class, ActivatePayload.ID).registerC2S().registerS2C();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to add activate packet", e);
+        }
+
+        try {
             PayloadRegistry.add(KeyPressedC2SPayload.class, KeyPressedC2SPayload.ID).registerC2S();
             PayloadRegistry.add(MouseMoveC2SPayload.class, MouseMoveC2SPayload.ID).registerC2S();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
@@ -56,7 +62,6 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         // S2C
         try {
-            PayloadRegistry.add(ActivateS2CPayload.class, ActivateS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDToggleS2CPayload.class, HUDToggleS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDPutElementS2CPayload.class, HUDPutElementS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDDeleteElementS2CPayload.class, HUDDeleteElementS2CPayload.ID).registerS2C();
@@ -72,7 +77,7 @@ public class Main implements ModInitializer, ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        PayloadRegistry.handleS2C(ActivateS2CPayload.class, (payload, context) -> {
+        PayloadRegistry.handleS2C(ActivatePayload.class, (payload, context) -> {
             NetworkUtil.enabled = true;
         });
 
