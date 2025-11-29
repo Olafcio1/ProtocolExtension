@@ -59,9 +59,11 @@ dependencies {
 }
 
 void expandFile(FileCopyDetails it) {
-    it.expand "version": project.version,
-              "minecraft_version": project.minecraft_version,
-              "loader_version": project.loader_version
+    it.expand (
+            "version": project.version,
+            "minecraft_version": project.minecraft_version,
+            "loader_version": project.loader_version
+    )
 }
 
 processResources {
@@ -156,6 +158,49 @@ private void nextVersion() {
     writer.flush()
 }
 
+var updateVersion = tasks.register("updateVersion") {
+    new ProcessBuilder()
+            .command("git", "reset")
+            .directory(projectDir)
+            .inheritIO()
+            .start()
+    .waitFor()
+
+    new ProcessBuilder()
+            .command("git", "add", "gradle.properties")
+            .directory(projectDir)
+            .inheritIO()
+            .start()
+    .waitFor()
+
+    new ProcessBuilder()
+            .command("git", "commit", "-m", "Version bump")
+            .directory(projectDir)
+            .inheritIO()
+            .start()
+    .waitFor()
+
+    new ProcessBuilder()
+            .command("git", "stash")
+            .directory(projectDir)
+            .inheritIO()
+            .start()
+    .waitFor()
+
+    new ProcessBuilder()
+            .command("git", "push")
+            .directory(projectDir)
+            .inheritIO()
+            .start()
+    .waitFor()
+
+    new ProcessBuilder()
+            .command("git", "stash", "pop")
+            .inheritIO()
+            .start()
+    .waitFor()
+}
+
 jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
@@ -169,7 +214,7 @@ private static String gitChangelog() {
     .inputStream.getText("UTF-8")
 }
 
-def m2 = tasks.register("Modrinth", TaskModrinthUpload) {
+def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
     it.dependsOn(tasks.named("modrinth"), remapJar)
     it.doFirst {
         modrinth {
@@ -182,21 +227,7 @@ def m2 = tasks.register("Modrinth", TaskModrinthUpload) {
 
     it.doLast {
         nextVersion()
-
-        new ProcessBuilder()
-                .command("git", "add", "${projectDir.path}/gradle.properties")
-                .start()
-        .waitFor()
-
-        new ProcessBuilder()
-                .command("git", "commit", "--amend", "--no-edit")
-                .start()
-        .waitFor()
-
-        new ProcessBuilder()
-                .command("git", "push", "--force-with-lease")
-                .start()
-        .waitFor()
+        updateVersion()
     }
 }
 
