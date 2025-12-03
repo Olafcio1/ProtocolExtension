@@ -220,6 +220,7 @@ def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
         modrinth {
             loaders = ["paper"]
             dependencies {
+                clear()
                 required.project "packetevents"
             }
         }
