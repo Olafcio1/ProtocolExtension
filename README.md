@@ -45,19 +45,19 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
 
 2. **Embed ProtocolExtension into your project:**
 
-   the recommended method is embedding its JAR file in your project structure and
-   adding it as a compile-only package in your package manager.
+   the recommended method is embedding its sources/API JAR file in your project structure and
+   adding it as a compile-only dependency in your package manager.
    <br/>
 
-   - download the latest PX .jar file and add it to the `libs/` directory
+   - download the latest API jar file [here](https://github.com/Olafcio1/ProtocolExtension/tree/main/bin) and add it to the `libs/` directory
    - add the following code to your `maven.pom`
       ```xml
       <dependency>
             <groupId>pl.olafcio</groupId>
             <artifactId>protocolextension</artifactId>
-            <version>0.2</version>
+            <version>5</version>
             <scope>provided</scope>
-            <systemPath>${project.basedir}/libs/protocolextension-0.2.jar</systemPath>
+            <systemPath>${project.basedir}/libs/protocolextension-5-api.jar</systemPath>
       </dependency>
      ```
 
