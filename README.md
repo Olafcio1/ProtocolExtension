@@ -56,8 +56,9 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
             <groupId>pl.olafcio</groupId>
             <artifactId>protocolextension</artifactId>
             <version>5</version>
-            <scope>provided</scope>
+            <scope>system</scope>
             <systemPath>${project.basedir}/libs/protocolextension-5-api.jar</systemPath>
+            <optional>true</optional>
       </dependency>
      ```
 
