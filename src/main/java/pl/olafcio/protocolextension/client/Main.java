@@ -24,6 +24,7 @@ package pl.olafcio.protocolextension.client;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.Perspective;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.olafcio.protocolextension.both.Position;
@@ -67,6 +68,7 @@ public class Main implements ModInitializer, ClientModInitializer {
             PayloadRegistry.add(HUDDeleteElementS2CPayload.class, HUDDeleteElementS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDClearS2CPayload.class, HUDClearS2CPayload.ID).registerS2C();
             PayloadRegistry.add(SetWindowTitleS2CPayload.class, SetWindowTitleS2CPayload.ID).registerS2C();
+            PayloadRegistry.add(SetPerspectiveS2CPayload.class, SetPerspectiveS2CPayload.ID).registerS2C();
             PayloadRegistry.add(ServerCommandS2CPayload.class, ServerCommandS2CPayload.ID).registerS2C();
             PayloadRegistry.add(MoveToggleS2CPayload.class, MoveToggleS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDSettingHotbarS2CPayload.class, HUDSettingHotbarS2CPayload.ID).registerS2C();
@@ -103,6 +105,11 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         PayloadRegistry.handleS2C(SetWindowTitleS2CPayload.class, (payload, context) -> {
             WindowTitle.text = payload.title();
+        });
+
+        var perspectives = Perspective.values();
+        PayloadRegistry.handleS2C(SetPerspectiveS2CPayload.class, (payload, context) -> {
+            mc.options.setPerspective(perspectives[payload.person()]);
         });
 
         PayloadRegistry.handleS2C(ServerCommandS2CPayload.class, (payload, context) -> {

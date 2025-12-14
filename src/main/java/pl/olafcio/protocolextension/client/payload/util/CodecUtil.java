@@ -26,6 +26,7 @@ import net.minecraft.network.codec.PacketCodecs;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -53,8 +54,10 @@ public enum CodecUtil {
         Method method = null;
         for (var m : methods) {
             if (
-                    m.getName().equals("tuple") &&
-                            m.getParameterCount() == paramTypes.size()
+                    Modifier.isStatic(m.getModifiers()) &&
+                    m.getReturnType() == PacketCodec.class &&
+                    m.getParameterCount() == paramTypes.size() &&
+                    m.getParameterTypes()[0] == PacketCodec.class
             ) {
                 method = m;
                 break;

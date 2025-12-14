@@ -35,6 +35,7 @@ import pl.olafcio.protocolextension.both.UIdentifier;
 import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
 import pl.olafcio.protocolextension.both.payloads.s2c.*;
 import pl.olafcio.protocolextension.server.api.PacketConstructionError;
+import pl.olafcio.protocolextension.server.api.objects.Perspective;
 import pl.olafcio.protocolextension.server.api.virtual.managers.PlayerManager;
 
 public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager {
@@ -115,6 +116,13 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
             ));
         }
 
+        public static void setPerspective(User player, Perspective perspective) {
+            player.sendPacket(Packets.make(
+                    SetPerspectiveS2CPayload.ID,
+                    perspective.index
+            ));
+        }
+
         public static void serverCommand(User player, boolean sneaking, boolean sprinting) {
             player.sendPacket(Packets.make(
                     ServerCommandS2CPayload.ID,
@@ -167,6 +175,11 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     @Override
     public void setWindowTitle(Player player, Component text) {
         UserMethods.setWindowTitle(PacketEvents.getAPI().getPlayerManager().getUser(player), text);
+    }
+
+    @Override
+    public void setPerspective(Player player, Perspective perspective) {
+        UserMethods.setPerspective(PacketEvents.getAPI().getPlayerManager().getUser(player), perspective);
     }
 
     @Override

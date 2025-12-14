@@ -23,6 +23,7 @@ package pl.olafcio.protocolextension.server.api.virtual.managers;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+import pl.olafcio.protocolextension.server.api.objects.Perspective;
 
 /**
  * Contains methods used to send specific PX payloads to players.
@@ -78,6 +79,11 @@ public interface PlayerManager {
      * }</pre>
      */
     void setWindowTitle(Player player, Component text);
+
+    /**
+     * Sets the perspective of the client.
+     */
+    void setPerspective(Player player, Perspective perspective);
 
     /**
      * Forces a sneaking state & sprinting state onto the client.
