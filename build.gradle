@@ -218,6 +218,15 @@ def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
     it.dependsOn(tasks.named("modrinth"), remapJar)
     it.doFirst {
         modrinth {
+            token = System.getenv("MODRINTH_TOKEN")
+            projectId = "protocolextension"
+            versionNumber = "${version}"
+            versionType = "release"
+            versionName = "ProtocolExtension stable-${version}-ml"
+            changelog = gitChangelog()
+            uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
+            gameVersions = [minecraft_version].toList()
+
             loaders = ["paper"]
             dependencies {
                 clear()
