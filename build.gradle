@@ -4,7 +4,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 plugins {
-    id 'fabric-loom' version '1.13.6'
+    id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
     id 'com.modrinth.minotaur' version "2.+"
 }
@@ -203,7 +203,7 @@ var updateVersion = tasks.register("updateVersion") {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 
@@ -223,7 +223,6 @@ def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
             versionNumber = "${version}"
             versionType = "release"
             versionName = "ProtocolExtension stable-${version}-ml"
-            changelog = gitChangelog()
             uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
             gameVersions = [minecraft_version].toList()
 

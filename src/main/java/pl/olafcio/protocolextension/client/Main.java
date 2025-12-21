@@ -105,6 +105,7 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         PayloadRegistry.handleS2C(SetWindowTitleS2CPayload.class, (payload, context) -> {
             WindowTitle.text = payload.title();
+            mc.updateWindowTitle();
         });
 
         var perspectives = Perspective.values();
