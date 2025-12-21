@@ -29,5 +29,6 @@ public interface ProtocolExtensionListener {
     default void onKeyPressed(Player player, int key) {}
 
     default void onConnect(Player player) {}
+    default void onActivated(Player player) {}
     default void onDisconnect(Player player) {}
 }

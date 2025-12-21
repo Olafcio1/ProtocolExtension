@@ -26,9 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import pl.olafcio.protocolextension.both.Position;
 import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public final class VariableAPI implements ProtocolExtensionListener {
+    private static final ArrayList<Player> activatedPlayers = new ArrayList<>();
     private static final HashMap<Player, Position> plr2mousePos = new HashMap<>();
 
     @Override
@@ -37,8 +40,14 @@ public final class VariableAPI implements ProtocolExtensionListener {
     }
 
     @Override
+    public void onActivated(Player player) {
+        activatedPlayers.add(player);
+    }
+
+    @Override
     public void onDisconnect(Player player) {
         plr2mousePos.remove(player);
+        activatedPlayers.remove(player);
     }
 
     public static @Nullable Position getMousePos(Player player) {
@@ -47,5 +56,16 @@ public final class VariableAPI implements ProtocolExtensionListener {
 
     public static Position getMousePos(Player player, Position defaultValue) {
         return plr2mousePos.getOrDefault(player, defaultValue);
+    }
+
+    /**
+     * Returns a list of online players that use ProtocolExtension.
+     */
+    public static List<Player> getActivatedPlayers() {
+        return activatedPlayers;
+    }
+
+    public static boolean isActivated(Player player) {
+        return activatedPlayers.contains(player);
     }
 }

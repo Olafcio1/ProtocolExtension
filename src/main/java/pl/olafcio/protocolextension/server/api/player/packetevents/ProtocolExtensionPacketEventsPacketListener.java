@@ -42,6 +42,13 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
                 ProtocolExtension.getAPI().playerManager().activate(
                         event.getPlayer()
                 );
+
+                ProtocolExtension.getAPI().listenerManager().dispatchEvent(
+                        "onActivated",
+                        event,
+                        new Class<?>[]{},
+                        new Object[]{}
+                );
             } else if (channel.equals(KeyPressedC2SPayload.ID.toString())) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
 
