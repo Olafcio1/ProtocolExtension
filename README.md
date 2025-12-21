@@ -46,11 +46,11 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
 
 2. **Embed ProtocolExtension into your project:**
 
-   the recommended method is embedding its sources/API JAR file in your project structure and
+   the recommended method is embedding its implementation JAR file in your project structure and
    adding it as a compile-only dependency in your package manager.
    <br/>
 
-   - download the latest API jar file [here](https://github.com/Olafcio1/ProtocolExtension/tree/main/bin) and add it to the `libs/` directory
+   - download the latest jar file [here](https://github.com/Olafcio1/ProtocolExtension/tree/main/bin) and add it to the `libs/` directory
    - add the following code to your `maven.pom`
       ```xml
       <dependency>
@@ -58,7 +58,7 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
             <artifactId>protocolextension</artifactId>
             <version>6</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/protocolextension-6-api.jar</systemPath>
+            <systemPath>${project.basedir}/libs/protocolextension-6.jar</systemPath>
             <optional>true</optional>
       </dependency>
      ```
