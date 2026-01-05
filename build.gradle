@@ -9,7 +9,10 @@ plugins {
     id 'com.modrinth.minotaur' version "2.+"
 }
 
-apply from: "${project.projectDir.getPath().split("versions")[0]}/versions.gradle"
+def generalDir = project.projectDir.getAbsolutePath().splitWithDelimiters("^.+?[/\\\\]IdeaProjects[/\\\\].+?[/\\\\]", 2)[1]
+def generalPath = Path.of(generalDir)
+
+apply from: "${generalDir}/versions.gradle"
 
 version = "${property('mod_version')}+${sc.current.version}"
 group = project.maven_group
@@ -264,6 +267,35 @@ modrinth {
     loaders = ["fabric"]
     dependencies {
         required.project "fabric-api"
+    }
+}
+
+tasks.register("projectExpand") {
+    doFirst {
+        Files.copy(
+                generalPath.resolve("./docs/CODE_OF_CONDUCT.md"),
+                generalPath.resolve("./CODE_OF_CONDUCT.md"),
+                StandardCopyOption.REPLACE_EXISTING
+        )
+
+        var readme = Files.readString(generalPath.resolve("./docs/README.template.md"))
+
+        var vct = "";
+        var vb = new StringBuilder();
+
+        for (var version : versions.keySet()) {
+            vb.append("| ${version} ")
+            vb.append("| Supported ")
+            vb.append("| [./versions/${version}/bin/${archives_base_name}]")
+              .append(  "(https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/${version}/bin/${archives_base_name}-${mod_version}+${version}.jar) |")
+            vb.append("\n")
+
+            vct += vb.toString()
+            vb.setLength(0)
+        }
+
+        readme = readme.replace("(( version compatibility table ))", vct)
+        Files.writeString(generalPath.resolve("./README.md"), readme)
     }
 }
 
