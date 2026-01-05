@@ -23,21 +23,10 @@ package pl.olafcio.protocolextension.server;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.FloatArgumentType;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import io.papermc.paper.command.brigadier.CommandSourceStack;
-import io.papermc.paper.command.brigadier.Commands;
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
-import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
-import io.papermc.paper.plugin.lifecycle.event.registrar.ReloadableRegistrarEvent;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -48,17 +37,12 @@ import pl.olafcio.protocolextension.server.api.base.ProtocolExtensionAPIRecord;
 import pl.olafcio.protocolextension.server.api.player.packetevents.ProtocolExtensionPacketEventsPacketListener;
 import pl.olafcio.protocolextension.server.api.player.packetevents.ProtocolExtensionPacketEventsPlayerManager;
 import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionAPI;
-import pl.olafcio.protocolextension.both.Position;
 import pl.olafcio.protocolextension.server.main.TCommands;
 import pl.olafcio.protocolextension.server.main.TMultiversion;
 
 import java.io.File;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public final class ProtocolExtension
         extends JavaPlugin
@@ -97,6 +81,7 @@ public final class ProtocolExtension
     }
 
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         PacketEvents.getAPI().getEventManager().registerListener(new ProtocolExtensionPacketEventsPacketListener(), PacketListenerPriority.NORMAL);

@@ -57,6 +57,7 @@ public interface TCommands extends TMultiversion {
         return playerList.getFirst();
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     default void registerCommands(ReloadableRegistrarEvent<@NotNull Commands> commands) {
         var px = Commands.literal("protocolextension")
                 .requires(source -> source.getSender().hasPermission("protocolextension.command"))
