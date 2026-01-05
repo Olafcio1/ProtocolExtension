@@ -27,7 +27,7 @@ import pl.olafcio.protocolextension.server.api.virtual.managers.ListenerManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class ListenerManagerImpl implements ListenerManager {
     private final ArrayList<ProtocolExtensionListener> listeners = new ArrayList<>();
@@ -46,11 +46,11 @@ public class ListenerManagerImpl implements ListenerManager {
     public void dispatchEvent(String methodName, Player player, Class<?>[] types, Object[] values) {
         var typeList = new ArrayList<Class<?>>();
         typeList.add(Player.class);
-        typeList.addAll(List.of(types));
+        Collections.addAll(typeList, types);
 
         var valueList = new ArrayList<>();
         valueList.add(player);
-        valueList.addAll(List.of(values));
+        Collections.addAll(valueList, values);
 
         var typeArray = typeList.toArray(Class<?>[]::new);
         var valueArray = valueList.toArray(Object[]::new);
