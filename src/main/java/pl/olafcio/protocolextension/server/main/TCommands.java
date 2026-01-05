@@ -124,7 +124,7 @@ public interface TCommands extends TMultiversion {
         ));
     }
 
-    default LiteralArgumentBuilder<CommandSourceStack> registerHud() {
+    private LiteralArgumentBuilder<CommandSourceStack> registerHud() {
         var hud = Commands.literal("hud");
 
         hud.then(Commands.literal("force")
@@ -220,7 +220,7 @@ public interface TCommands extends TMultiversion {
         return hud;
     }
 
-    default LiteralArgumentBuilder<CommandSourceStack> registerMousePos() {
+    private LiteralArgumentBuilder<CommandSourceStack> registerMousePos() {
         return Commands.literal("mouse-position")
                 .requires(restricted(source -> source.getSender().hasPermission(
                         "protocolextension.command.mouse_position"
