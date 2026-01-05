@@ -22,13 +22,14 @@
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
 import org.jetbrains.annotations.Range;
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
 public record HUDPutElementS2CPayload(
-        short id,
-        @Range(from = 0, to = 1) double x,
-        @Range(from = 0, to = 1) double y,
-        String text
+        @Order(0) short id,
+        @Order(1) @Range(from = 0, to = 1) double x,
+        @Order(2) @Range(from = 0, to = 1) double y,
+        @Order(3) String text
 ) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "put-hud");
 }

@@ -21,8 +21,12 @@
 
 package pl.olafcio.protocolextension.both.payloads.c2s;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record MouseMoveC2SPayload(double x, double y) {
+public record MouseMoveC2SPayload(
+        @Order(0) double x,
+        @Order(1) double y
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "mouse-move");
 }

@@ -21,8 +21,12 @@
 
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record ServerCommandS2CPayload(boolean sneaking, boolean sprinting) {
+public record ServerCommandS2CPayload(
+        @Order(0) boolean sneaking,
+        @Order(1) boolean sprinting
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "server-command");
 }

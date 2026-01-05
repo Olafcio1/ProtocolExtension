@@ -21,8 +21,11 @@
 
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record HUDDeleteElementS2CPayload(short id) {
+public record HUDDeleteElementS2CPayload(
+        @Order(0) short id
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "delete-hud");
 }

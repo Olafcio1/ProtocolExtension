@@ -26,6 +26,7 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 import pl.olafcio.protocolextension.client.payload.func.Unbound;
 import pl.olafcio.protocolextension.client.payload.util.CodecUtil;
@@ -34,8 +35,8 @@ import pl.olafcio.protocolextension.client.payload.util.PayloadUtil;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -58,6 +59,9 @@ public final class PayloadRegistry {
         var types = constructor.getParameterTypes();
 
         var values = record.getRecordComponents();
+        Arrays.sort(values, Comparator.comparingInt(
+                x -> x.getAnnotation(Order.class).value()
+        ));
 
         var wrapper = PayloadUtil.customPayload(cpID, values, types);
         var wrapperCo = (Constructor<G>)
@@ -67,13 +71,21 @@ public final class PayloadRegistry {
 
         if (values.length >= 1) {
             var valuesW = wrapper.getDeclaredMethods();
+            var valuesWL = Arrays.stream(valuesW)
+                    .filter(x -> !x.getName().equals("getId"))
+                    .sorted(Comparator.comparingInt(
+                            m -> Arrays.stream(values)
+                                        .filter(x -> x.getName().equals(m.getName()))
+                                        .findAny()
+                                        .orElseThrow()
+                                        .getAnnotation(Order.class)
+                                        .value()
+                    ))
+            .toArray(Method[]::new);
 
             var paramTypes = new ArrayList<Class<?>>();
             var paramValues = new ArrayList<>();
-            for (var fComponent : valuesW) {
-                if (fComponent.getName().equals("getId"))
-                    continue;
-
+            for (var fComponent : valuesWL) {
                 var fCodec = CodecUtil.getPacketCodec(fComponent.getReturnType());
                 var fFunction = new Unbound(fComponent);
 

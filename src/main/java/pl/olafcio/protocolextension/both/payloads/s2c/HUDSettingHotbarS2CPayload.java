@@ -21,8 +21,11 @@
 
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record HUDSettingHotbarS2CPayload(boolean shown) {
+public record HUDSettingHotbarS2CPayload(
+        @Order(0) boolean shown
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "toggle-hotbar-hud");
 }

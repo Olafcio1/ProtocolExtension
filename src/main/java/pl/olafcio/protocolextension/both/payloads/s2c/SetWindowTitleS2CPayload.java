@@ -21,8 +21,11 @@
 
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record SetWindowTitleS2CPayload(String title) {
+public record SetWindowTitleS2CPayload(
+        @Order(0) String title
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "set-window-title");
 }

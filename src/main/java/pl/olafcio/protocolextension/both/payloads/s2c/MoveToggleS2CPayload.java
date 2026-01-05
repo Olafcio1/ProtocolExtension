@@ -21,8 +21,11 @@
 
 package pl.olafcio.protocolextension.both.payloads.s2c;
 
+import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 
-public record MoveToggleS2CPayload(boolean canMove) {
+public record MoveToggleS2CPayload(
+        @Order(0) boolean canMove
+) {
     public static UIdentifier ID = new UIdentifier("protocolextension", "move-toggle");
 }
