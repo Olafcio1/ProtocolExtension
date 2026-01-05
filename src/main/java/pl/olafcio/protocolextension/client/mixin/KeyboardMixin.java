@@ -22,9 +22,12 @@
 package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.Keyboard;
-import net.minecraft.client.input.KeyInput;
+//? if >1.21.8 {
+/*import net.minecraft.client.input.KeyInput;
+*///?}
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,22 +38,34 @@ import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
+    //? if <=1.21.8 {
     @Inject(at = @At("HEAD"), method = "onKey")
+    public void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
+        onKey(action, key, (modifiers & GLFW.GLFW_MOD_ALT) == GLFW.GLFW_MOD_ALT);
+    }
+    //?} else {
+    /*@Inject(at = @At("HEAD"), method = "onKey")
     public void onKey(long window, int action, KeyInput input, CallbackInfo ci) {
+        onKey(action, input.key(), input.hasAlt());
+    }
+    *///?}
+
+    @Unique
+    private void onKey(int action, int key, boolean hasAlt) {
         if (
                 NetworkUtil.enabled &&
                 action == GLFW.GLFW_PRESS &&
-                input.key() != GLFW.GLFW_KEY_ESCAPE &&
-                input.key() != GLFW.GLFW_KEY_UNKNOWN &&
+                key != GLFW.GLFW_KEY_ESCAPE &&
+                key != GLFW.GLFW_KEY_UNKNOWN &&
                 // Tf are world keys lmfao
-                input.key() != GLFW.GLFW_KEY_WORLD_1 &&
-                input.key() != GLFW.GLFW_KEY_WORLD_2 &&
-//                !input.hasCtrl() &&
-                !input.hasAlt() &&
-//                !input.hasShift() &&
+                key != GLFW.GLFW_KEY_WORLD_1 &&
+                key != GLFW.GLFW_KEY_WORLD_2 &&
+//              !input.hasCtrl() &&
+                !hasAlt &&
+//              !input.hasShift() &&
                 Main.mc.currentScreen == null
         ) {
-            NetworkUtil.send(PayloadRegistry.get(KeyPressedC2SPayload.class).create(input.key()));
+            NetworkUtil.send(PayloadRegistry.get(KeyPressedC2SPayload.class).create(key));
         }
     }
 }

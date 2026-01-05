@@ -35,7 +35,11 @@ public interface TMultiversion {
      */
     default Predicate<CommandSourceStack> restricted(Predicate<CommandSourceStack> predicate) {
         try {
+            //? if >=1.21.6 {
             return Commands.restricted(predicate);
+            //?} else {
+            /*return predicate;
+            *///?}
         } catch (NoSuchMethodError e) {
             return predicate;
         }
