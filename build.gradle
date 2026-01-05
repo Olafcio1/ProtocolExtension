@@ -67,8 +67,8 @@ dependencies {
 void expandFile(FileCopyDetails it) {
     it.expand (
             "version": project.version,
-            "minecraft_version": project.minecraft_version,
-            "loader_version": project.fabric_loader
+            "minecraft_version": sc.current.version,
+            "loader_version": property('fabric_loader')
     )
 }
 
@@ -109,6 +109,11 @@ java {
 def bin = Path.of("$projectDir/bin")
 tasks.named("jar") {
     doFirst {
+        if (!Files.exists(bin)) {
+            Files.createDirectory(bin);
+            return;
+        }
+
         def binFiles = Files.list(bin)
         for (def bf : binFiles)
             Files.delete(bin.resolve(bf))
