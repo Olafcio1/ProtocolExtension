@@ -76,9 +76,6 @@ void expandFile(FileCopyDetails it) {
 }
 
 processResources {
-    inputs.property "version", project.version
-    inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.fabric_loader
     filteringCharset "UTF-8"
 
     filesMatching("fabric.mod.json") {
@@ -234,7 +231,7 @@ def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
             versionType = "release"
             versionName = "ProtocolExtension stable-${version}-ml"
             uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
-            gameVersions = [minecraft_version].toList()
+            gameVersions = [sc.current.version].toList()
 
             loaders = ["paper"]
             dependencies {
@@ -262,7 +259,7 @@ modrinth {
     versionName = "ProtocolExtension stable-${version}-ml"
     changelog = gitChangelog()
     uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
-    gameVersions = [minecraft_version].toList()
+    gameVersions = [sc.current.version].toList()
 
     loaders = ["fabric"]
     dependencies {
