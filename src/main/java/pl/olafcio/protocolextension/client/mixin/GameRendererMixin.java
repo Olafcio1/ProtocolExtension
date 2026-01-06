@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Olafcio
+ * Copyright (c) 2026 Olafcio
  * (Olafcio1 on GitHub)
  *
  * This software is provided 'as-is', without any express or implied
@@ -19,33 +19,21 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.client;
+package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.c2s.common.CustomPayloadC2SPacket;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderTickCounter;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.olafcio.protocolextension.client.state.GameState;
-import pl.olafcio.protocolextension.client.state.MoveState;
-import pl.olafcio.protocolextension.client.state.WindowTitle;
-import pl.olafcio.protocolextension.client.state.hud.HudState;
 
-public enum NetworkUtil {
-    ;
-
-    public static boolean enabled = false;
-    public static void send(CustomPayload payload) {
-        if (enabled)
-            Main.mc.player.networkHandler.sendPacket(new CustomPayloadC2SPacket(payload));
-    }
-
-    public static void reset() {
-        enabled = false;
-
-        MoveState.value = true;
-        GameState.render = true;
-
-        WindowTitle.text = null;
-
-        HudState.hotbar = true;
-        HudState.elements.clear();
+@Mixin(GameRenderer.class)
+public class GameRendererMixin {
+    @Inject(at = @At("HEAD"), method = "renderWorld", cancellable = true)
+    public void renderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci) {
+        if (!GameState.render)
+            ci.cancel();
     }
 }

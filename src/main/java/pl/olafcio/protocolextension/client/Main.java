@@ -32,6 +32,7 @@ import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
 import pl.olafcio.protocolextension.both.payloads.c2s.*;
 import pl.olafcio.protocolextension.both.payloads.s2c.*;
 import pl.olafcio.protocolextension.client.payload.*;
+import pl.olafcio.protocolextension.client.state.GameState;
 import pl.olafcio.protocolextension.client.state.MoveState;
 import pl.olafcio.protocolextension.client.state.WindowTitle;
 import pl.olafcio.protocolextension.client.state.hud.HudElement;
@@ -72,6 +73,7 @@ public class Main implements ModInitializer, ClientModInitializer {
             PayloadRegistry.add(ServerCommandS2CPayload.class, ServerCommandS2CPayload.ID).registerS2C();
             PayloadRegistry.add(MoveToggleS2CPayload.class, MoveToggleS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDSettingHotbarS2CPayload.class, HUDSettingHotbarS2CPayload.ID).registerS2C();
+            PayloadRegistry.add(ToggleRenderingS2CPayload.class, ToggleRenderingS2CPayload.ID).registerS2C();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Failed to add S2C packets", e);
         }
@@ -124,6 +126,10 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         PayloadRegistry.handleS2C(HUDSettingHotbarS2CPayload.class, (payload, context) -> {
             HudState.hotbar = payload.shown();
+        });
+
+        PayloadRegistry.handleS2C(ToggleRenderingS2CPayload.class, (payload, context) -> {
+            GameState.render = payload.state();
         });
     }
 }

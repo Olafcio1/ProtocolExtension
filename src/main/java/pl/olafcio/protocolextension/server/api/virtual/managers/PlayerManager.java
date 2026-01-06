@@ -93,8 +93,15 @@ public interface PlayerManager {
     /**
      * Toggles whether the client can tick movement logic.
      * <p>
-     * <b>Warning:</b> Might cause disconnects (did) for flying or anticheat detections.
+     * <b>Warning:</b> Might cause disconnects (does) for flying or anticheat detections.
+     * <br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     *                 To prevent it from happening, toggling fly mode for the player is recommended.
      */
     // TODO: Should I set {@code player.flying = true} before executing any handlers?
     void moveToggle(Player player, boolean state);
+
+    /**
+     * Toggles whether the game renders for the client.
+     */
+    void toggleGameRendering(Player player, boolean state);
 }

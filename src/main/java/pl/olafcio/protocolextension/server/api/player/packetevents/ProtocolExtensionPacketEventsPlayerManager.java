@@ -144,6 +144,13 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
                     state
             ));
         }
+
+        public static void toggleGameRendering(User player, boolean state) {
+            player.sendPacket(Packets.make(
+                    ToggleRenderingS2CPayload.ID,
+                    state
+            ));
+        }
     }
 
     //#region Player methods
@@ -195,5 +202,10 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     @Override
     public void toggleHotbarHUD(Player player, boolean state) {
         UserMethods.toggleHotbarHUD(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
+    }
+
+    @Override
+    public void toggleGameRendering(Player player, boolean state) {
+        UserMethods.toggleGameRendering(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
     }
 }
