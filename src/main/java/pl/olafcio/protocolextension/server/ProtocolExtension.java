@@ -39,6 +39,7 @@ import pl.olafcio.protocolextension.server.api.player.packetevents.ProtocolExten
 import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionAPI;
 import pl.olafcio.protocolextension.server.main.TCommands;
 import pl.olafcio.protocolextension.server.main.TMultiversion;
+import pl.olafcio.protocolextension.server.util.ArrayUtils;
 
 import java.io.File;
 import java.io.InputStreamReader;
@@ -91,12 +92,12 @@ public final class ProtocolExtension
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        api.listenerManager().dispatchEvent("onConnect", event, new Class<?>[]{}, new Object[]{});
+        api.listenerManager().dispatchEvent("onConnect", event, ArrayUtils.EMPTY, ArrayUtils.EMPTY);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        api.listenerManager().dispatchEvent("onDisconnect", event, new Class<?>[]{}, new Object[]{});
+        api.listenerManager().dispatchEvent("onDisconnect", event, ArrayUtils.EMPTY, ArrayUtils.EMPTY);
     }
 
     public static ProtocolExtensionAPI getAPI() {

@@ -30,8 +30,21 @@ import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
 import pl.olafcio.protocolextension.both.payloads.c2s.KeyPressedC2SPayload;
 import pl.olafcio.protocolextension.both.payloads.c2s.MouseMoveC2SPayload;
 import pl.olafcio.protocolextension.server.ProtocolExtension;
+import pl.olafcio.protocolextension.server.util.ArrayUtils;
 
 public class ProtocolExtensionPacketEventsPacketListener implements PacketListener {
+    private final Class<?>[] KP_TYPES = new Class<?>[]{
+            int.class
+    };
+
+    private final Class<?>[] MM_TYPES = new Class<?>[]{
+            double.class,
+            double.class
+    };
+
+    private final Object[] SINGLE_ARRAY = new Object[1];
+    private final Object[] DOUBLE_ARRAY = new Object[2];
+
     @Override
     public void onPacketReceive(PacketReceiveEvent event) {
         if (event.getPacketType() == PacketType.Play.Client.PLUGIN_MESSAGE) {
@@ -46,36 +59,29 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(
                         "onActivated",
                         event,
-                        new Class<?>[]{},
-                        new Object[]{}
+                        ArrayUtils.EMPTY,
+                        ArrayUtils.EMPTY
                 );
             } else if (channel.equals(KeyPressedC2SPayload.ID.toString())) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
+                SINGLE_ARRAY[0] = data.readInt();
 
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(
                         "onKeyPressed",
                         event,
-                        new Class<?>[]{
-                                int.class
-                        },
-                        new Object[]{
-                                data.readInt()
-                        }
+                        KP_TYPES,
+                        SINGLE_ARRAY
                 );
             } else if (channel.equals(MouseMoveC2SPayload.ID.toString())) {
                 var data = Unpooled.wrappedBuffer(wrapper.getData());
+                DOUBLE_ARRAY[0] = data.readDouble();
+                DOUBLE_ARRAY[1] = data.readDouble();
 
                 ProtocolExtension.getAPI().listenerManager().dispatchEvent(
                         "onMouseMove",
                         event,
-                        new Class<?>[]{
-                                double.class,
-                                double.class
-                        },
-                        new Object[]{
-                                data.readDouble(),
-                                data.readDouble()
-                        }
+                        MM_TYPES,
+                        DOUBLE_ARRAY
                 );
             }
         }

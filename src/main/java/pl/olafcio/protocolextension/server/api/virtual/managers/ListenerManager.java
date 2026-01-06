@@ -44,7 +44,6 @@ public interface ListenerManager {
      * }
      * }</pre>
      */
-    // TODO: Key constants server-side
     void registerListener(ProtocolExtensionListener listener);
 
     /**
