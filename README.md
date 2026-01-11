@@ -50,15 +50,15 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
    adding it as a compile-only dependency in your package manager.
    <br/>
 
-   - download the latest jar file [here](https://github.com/Olafcio1/ProtocolExtension/tree/main/bin) and add it to the `libs/` directory
+   - download the latest jar file for your specific version, [e.g. here](https://github.com/Olafcio1/ProtocolExtension/tree/main/versions/1.21.11/bin) for 1.21.11, and add it to the `libs/` directory
    - add the following code to your `maven.pom`
       ```xml
       <dependency>
             <groupId>pl.olafcio</groupId>
             <artifactId>protocolextension</artifactId>
-            <version>8</version>
+            <version>10</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/protocolextension-8.jar</systemPath>
+            <systemPath>${project.basedir}/libs/protocolextension-10.jar</systemPath>
             <optional>true</optional>
       </dependency>
      ```
