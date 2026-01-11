@@ -32,7 +32,11 @@ import pl.olafcio.protocolextension.client.state.GameState;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderWorld", cancellable = true)
-    public void renderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci) {
+    //? if <1.20.6 {
+    /*public void renderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci) {
+    *///?} else {
+    public void renderWorld(float tickDelta, long limitTime, CallbackInfo ci) {
+    //?}
         if (!GameState.render)
             ci.cancel();
     }

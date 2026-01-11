@@ -39,10 +39,10 @@ public enum CodecUtil {
         this.put(int.class, PacketCodecs.INTEGER);
         this.put(double.class, PacketCodecs.DOUBLE);
         //? if >=1.21.4 {
-        this.put(boolean.class, PacketCodecs.BOOLEAN);
-        //?} else {
-        /*this.put(boolean.class, PacketCodecs.BOOL);
-        *///?}
+        /*this.put(boolean.class, PacketCodecs.BOOLEAN);
+        *///?} else {
+        this.put(boolean.class, PacketCodecs.BOOL);
+        //?}
     }};
 
     public static @NotNull PacketCodec<?, ?> getPacketCodec(Class<?> type) {
