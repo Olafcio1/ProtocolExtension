@@ -1,4 +1,6 @@
 import com.modrinth.minotaur.TaskModrinthUpload
+
+import java.nio.file.CopyOption
 import java.nio.file.Path
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
@@ -110,8 +112,8 @@ def bin = Path.of("$projectDir/bin")
 tasks.named("jar") {
     doFirst {
         if (!Files.exists(bin)) {
-            Files.createDirectory(bin);
-            return;
+            Files.createDirectory(bin)
+            return
         }
 
         def binFiles = Files.list(bin)
@@ -125,7 +127,7 @@ tasks.named("remapJar") {
         Files.copy(
                 Path.of("$projectDir/build/libs/" + remapJar.archiveFileName.get()),
                 bin.resolve("protocolextension-${version}.jar"),
-                StandardCopyOption.REPLACE_EXISTING
+                (CopyOption) StandardCopyOption.REPLACE_EXISTING
         )
     }
 }
@@ -277,8 +279,8 @@ tasks.register("projectExpand") {
 
         var readme = Files.readString(generalPath.resolve("./docs/README.template.md"))
 
-        var vct = "";
-        var vb = new StringBuilder();
+        var vct = ""
+        var vb = new StringBuilder()
 
         for (var version : versions.keySet()) {
             vb.append("| ${version} ")
