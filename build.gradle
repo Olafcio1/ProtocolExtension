@@ -1,5 +1,3 @@
-import com.modrinth.minotaur.TaskModrinthUpload
-
 import java.nio.file.CopyOption
 import java.nio.file.Path
 import java.nio.file.Files
@@ -8,7 +6,7 @@ import java.nio.file.StandardCopyOption
 plugins {
     id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
-    id 'com.modrinth.minotaur' version "2.+"
+    id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
 }
 
 def generalDir = project.projectDir.getAbsolutePath().splitWithDelimiters("^.+?[/\\\\]IdeaProjects[/\\\\].+?[/\\\\]", 2)[1]
@@ -124,8 +122,13 @@ tasks.named("jar") {
 
 tasks.named("remapJar") {
     doLast {
+        var jar = Path.of("$projectDir/build/libs/" + remapJar.archiveFileName.get())
+        if (!Files.exists(jar)) {
+            return
+        }
+
         Files.copy(
-                Path.of("$projectDir/build/libs/" + remapJar.archiveFileName.get()),
+                jar,
                 bin.resolve("protocolextension-${version}.jar"),
                 (CopyOption) StandardCopyOption.REPLACE_EXISTING
         )
@@ -223,50 +226,34 @@ private static String gitChangelog() {
     .inputStream.getText("UTF-8")
 }
 
-def m2 = tasks.register("modrinth - paper", TaskModrinthUpload) {
-    it.dependsOn(tasks.named("modrinth"), remapJar)
-    it.doFirst {
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN")
-            projectId = "protocolextension"
-            versionNumber = "${version}"
-            versionType = "release"
-            versionName = "ProtocolExtension stable-${version}-ml"
-            uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
-            gameVersions = [sc.current.version].toList()
-
-            loaders = ["paper"]
-            dependencies {
-                clear()
-                required.project "packetevents"
-            }
-        }
-    }
-
-    it.doLast {
-        nextVersion()
-        updateVersion()
-    }
-}
-
-tasks.modrinth {
-    finalizedBy(m2)
-}
-
-modrinth {
-    token = System.getenv("MODRINTH_TOKEN")
-    projectId = "protocolextension"
-    versionNumber = "${version}"
-    versionType = "release"
-    versionName = "ProtocolExtension stable-${version}-ml"
+publishMods {
+    file = tasks.named("remapJar").flatMap { it.archiveFile }
     changelog = gitChangelog()
-    uploadFile = tasks.named("remapJar").flatMap { it.archiveFile }
-    gameVersions = [sc.current.version].toList()
+    type = STABLE
 
-    loaders = ["fabric"]
-    dependencies {
-        required.project "fabric-api"
+    def options = modrinthOptions {
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        projectId = "qhe9Yypz"
+        displayName = "ProtocolExtension stable-${property('mod_version')}-ml"
+
+        minecraftVersions.add(sc.current.version)
     }
+
+    modrinth("modrinthFabric") {
+        from options
+        modLoaders.add("fabric")
+        requires("fabric-api")
+    }
+
+    modrinth("modrinthPaper") {
+        from options
+        modLoaders.add("paper")
+        requires("packetevents")
+    }
+}
+
+tasks.publishMods {
+    dependsOn(remapJar)
 }
 
 tasks.register("projectExpand") {
