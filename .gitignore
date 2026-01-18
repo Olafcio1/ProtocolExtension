@@ -3,6 +3,8 @@
 .idea/runConfigurations/*
 .idea/modules/*.main.iml
 
+!.idea/icon.png
+
 *.iml
 *.ipr
 *.iws
