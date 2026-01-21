@@ -40,11 +40,11 @@ public class IngameHudMixin {
     @Shadow @Final private MinecraftClient client;
 
     @Inject(at = @At("TAIL"), method = "render")
-    //? if <1.20.6 {
-    /*public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-    *///?} else {
-    public void render(DrawContext context, float tickDelta, CallbackInfo ci) {
-    //?}
+    //? if >=1.21 <=1.21.4 {
+    public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    //?} else {
+    /*public void render(DrawContext context, float tickDelta, CallbackInfo ci) {
+    *///?}
         for (var item : HudState.elements.values()) {
             var pos = item.pos();
             var text = item.text();
@@ -60,11 +60,11 @@ public class IngameHudMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "renderHotbar", cancellable = true)
-    //? if <1.20.6 {
-    /*private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-    *///?} else {
-    private void renderHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
-    //?}
+    //? if >=1.21 <=1.21.4 {
+    private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    //?} else {
+    /*private void renderHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
+    *///?}
         if (!HudState.hotbar)
             ci.cancel();
     }
