@@ -252,9 +252,9 @@ publishMods {
     }
 }
 
-tasks.publishMods {
-    dependsOn(remapJar)
-}
+//tasks.publishMods {
+//    dependsOn(remapJar)
+//}
 
 tasks.register("projectExpand") {
     doFirst {
