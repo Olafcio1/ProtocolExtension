@@ -24,6 +24,8 @@ This makes it easier for both the servers, and the players, as it is a universal
 | ActivatePayload            | Sent first when the client supports PX.                          | v3      |
 | KeyPressedC2SPayload       | Sent when the client presses a key in-game.                      | v1      |
 | MouseMoveC2SPayload        | Sent when the client moves the mouse in a screen.                | v1      |
+| ChatOpenedC2SPayload       | Sent when the client opens the chat screen.                      | v14     |
+| ChatClosedC2SPayload       | Sent when the client closes the chat screen.                     | v14     |
 | **[Clientbound]**          |                                                                  |         |
 | ActivatePayload            | Sent back when the server supports PX too.                       | v2      |
 | HUDClearS2CPayload         | Clears all previously created HUD elements by the server.        | v2      |
@@ -89,17 +91,17 @@ An online documentation covering all topics related to ProtocolExtension will be
 ## ⚙️ Version compatibility
 | Name | State | Download Link |
 |------|-------|---------------|
-| 1.21.11 | Supported | [./versions/1.21.11/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.11/bin/protocolextension-12+1.21.11.jar) |
-| 1.21.10 | Supported | [./versions/1.21.10/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.10/bin/protocolextension-12+1.21.10.jar) |
-| 1.21.9 | Supported | [./versions/1.21.9/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.9/bin/protocolextension-12+1.21.9.jar) |
-| 1.21.8 | Supported | [./versions/1.21.8/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.8/bin/protocolextension-12+1.21.8.jar) |
-| 1.21.7 | Supported | [./versions/1.21.7/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.7/bin/protocolextension-12+1.21.7.jar) |
-| 1.21.6 | Supported | [./versions/1.21.6/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.6/bin/protocolextension-12+1.21.6.jar) |
-| 1.21.5 | Supported | [./versions/1.21.5/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.5/bin/protocolextension-12+1.21.5.jar) |
-| 1.21.4 | Supported | [./versions/1.21.4/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.4/bin/protocolextension-12+1.21.4.jar) |
-| 1.21.3 | Supported | [./versions/1.21.3/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.3/bin/protocolextension-12+1.21.3.jar) |
-| 1.21.2 | Supported | [./versions/1.21.2/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.2/bin/protocolextension-12+1.21.2.jar) |
-| 1.21.1 | Supported | [./versions/1.21.1/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.1/bin/protocolextension-12+1.21.1.jar) |
-| 1.21 | Supported | [./versions/1.21/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21/bin/protocolextension-12+1.21.jar) |
-| 1.20.6 | Supported | [./versions/1.20.6/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.20.6/bin/protocolextension-12+1.20.6.jar) |
+| 1.21.11 | Supported | [./versions/1.21.11/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.11/bin/protocolextension-14+1.21.11.jar) |
+| 1.21.10 | Supported | [./versions/1.21.10/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.10/bin/protocolextension-14+1.21.10.jar) |
+| 1.21.9 | Supported | [./versions/1.21.9/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.9/bin/protocolextension-14+1.21.9.jar) |
+| 1.21.8 | Supported | [./versions/1.21.8/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.8/bin/protocolextension-14+1.21.8.jar) |
+| 1.21.7 | Supported | [./versions/1.21.7/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.7/bin/protocolextension-14+1.21.7.jar) |
+| 1.21.6 | Supported | [./versions/1.21.6/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.6/bin/protocolextension-14+1.21.6.jar) |
+| 1.21.5 | Supported | [./versions/1.21.5/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.5/bin/protocolextension-14+1.21.5.jar) |
+| 1.21.4 | Supported | [./versions/1.21.4/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.4/bin/protocolextension-14+1.21.4.jar) |
+| 1.21.3 | Supported | [./versions/1.21.3/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.3/bin/protocolextension-14+1.21.3.jar) |
+| 1.21.2 | Supported | [./versions/1.21.2/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.2/bin/protocolextension-14+1.21.2.jar) |
+| 1.21.1 | Supported | [./versions/1.21.1/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21.1/bin/protocolextension-14+1.21.1.jar) |
+| 1.21 | Supported | [./versions/1.21/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.21/bin/protocolextension-14+1.21.jar) |
+| 1.20.6 | Supported | [./versions/1.20.6/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/1.20.6/bin/protocolextension-14+1.20.6.jar) |
 

@@ -24,6 +24,8 @@ This makes it easier for both the servers, and the players, as it is a universal
 | ActivatePayload            | Sent first when the client supports PX.                          | v3      |
 | KeyPressedC2SPayload       | Sent when the client presses a key in-game.                      | v1      |
 | MouseMoveC2SPayload        | Sent when the client moves the mouse in a screen.                | v1      |
+| ChatOpenedC2SPayload       | Sent when the client opens the chat screen.                      | v14     |
+| ChatClosedC2SPayload       | Sent when the client closes the chat screen.                     | v14     |
 | **[Clientbound]**          |                                                                  |         |
 | ActivatePayload            | Sent back when the server supports PX too.                       | v2      |
 | HUDClearS2CPayload         | Clears all previously created HUD elements by the server.        | v2      |
