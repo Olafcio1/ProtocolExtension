@@ -108,5 +108,5 @@ public interface PlayerManager {
     /**
      * Clears the client's chat.
      */
-    void clearChat(Player player, boolean state);
+    void clearChat(Player player);
 }

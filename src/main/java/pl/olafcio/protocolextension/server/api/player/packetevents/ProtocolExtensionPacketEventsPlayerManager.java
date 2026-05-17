@@ -152,10 +152,9 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
             ));
         }
 
-        public static void clearChat(User player, boolean state) {
+        public static void clearChat(User player) {
             player.sendPacket(Packets.make(
-                    ClearChatS2CPayload.ID,
-                    state
+                    ClearChatS2CPayload.ID
             ));
         }
     }
@@ -217,7 +216,7 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     }
 
     @Override
-    public void clearChat(Player player, boolean state) {
-        UserMethods.clearChat(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
+    public void clearChat(Player player) {
+        UserMethods.clearChat(PacketEvents.getAPI().getPlayerManager().getUser(player));
     }
 }
