@@ -74,6 +74,7 @@ public class Main implements ModInitializer, ClientModInitializer {
             PayloadRegistry.add(MoveToggleS2CPayload.class, MoveToggleS2CPayload.ID).registerS2C();
             PayloadRegistry.add(HUDSettingHotbarS2CPayload.class, HUDSettingHotbarS2CPayload.ID).registerS2C();
             PayloadRegistry.add(ToggleRenderingS2CPayload.class, ToggleRenderingS2CPayload.ID).registerS2C();
+            PayloadRegistry.add(ClearChatS2CPayload.class, ClearChatS2CPayload.ID).registerS2C();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Failed to add S2C packets", e);
         }
@@ -130,6 +131,10 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         PayloadRegistry.handleS2C(ToggleRenderingS2CPayload.class, (payload, context) -> {
             GameState.render = payload.state();
+        });
+
+        PayloadRegistry.handleS2C(ClearChatS2CPayload.class, (payload, context) -> {
+            context.client().inGameHud.getChatHud().clear(false);
         });
     }
 }

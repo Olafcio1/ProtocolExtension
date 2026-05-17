@@ -35,6 +35,7 @@ This makes it easier for both the servers, and the players, as it is a universal
 | ServerCommandS2CPayload    | Sets the player's sneaking and sprinting states.                 | v2      |
 | SetWindowTitleS2CPayload   | Changes the player's window title.                               | v2      |
 | SetPerspectiveS2CPayload   | Changes the player's camera perspective.                         | v6      |
+| ClearChatS2CPayload        | Clears the client's chat.                                        | v13     |
 
 ## 🎐 Quickstart
 To start developing with ProtocolExtension, first you need to have a Java IDE installed. I provide support only for IntelliJ IDEA.
