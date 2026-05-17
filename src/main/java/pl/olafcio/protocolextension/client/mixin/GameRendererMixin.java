@@ -22,7 +22,7 @@
 package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.render.GameRenderer;
-//? if >=1.21 <=1.21.4 {
+//? if >=1.21 {
 import net.minecraft.client.render.RenderTickCounter;
 //?}
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +34,7 @@ import pl.olafcio.protocolextension.client.state.GameState;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(at = @At("HEAD"), method = "renderWorld", cancellable = true)
-    //? if >=1.21 <=1.21.4 {
+    //? if >=1.21 {
     public void renderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci) {
     //?} else {
     /*public void renderWorld(float tickDelta, long limitTime, CallbackInfo ci) {

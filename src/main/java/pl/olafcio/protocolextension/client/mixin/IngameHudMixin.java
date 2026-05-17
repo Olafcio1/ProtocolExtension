@@ -40,7 +40,7 @@ public class IngameHudMixin {
     @Shadow @Final private MinecraftClient client;
 
     @Inject(at = @At("TAIL"), method = "render")
-    //? if >=1.21 <=1.21.4 {
+    //? if >=1.21 {
     public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
     //?} else {
     /*public void render(DrawContext context, float tickDelta, CallbackInfo ci) {
@@ -60,7 +60,7 @@ public class IngameHudMixin {
     }
 
     @Inject(at = @At("HEAD"), method = "renderHotbar", cancellable = true)
-    //? if >=1.21 <=1.21.4 {
+    //? if >=1.21 {
     private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
     //?} else {
     /*private void renderHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
