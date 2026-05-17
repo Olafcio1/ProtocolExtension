@@ -151,6 +151,13 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
                     state
             ));
         }
+
+        public static void clearChat(User player, boolean state) {
+            player.sendPacket(Packets.make(
+                    ClearChatS2CPayload.ID,
+                    state
+            ));
+        }
     }
 
     //#region Player methods
@@ -207,5 +214,10 @@ public class ProtocolExtensionPacketEventsPlayerManager implements PlayerManager
     @Override
     public void toggleGameRendering(Player player, boolean state) {
         UserMethods.toggleGameRendering(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
+    }
+
+    @Override
+    public void clearChat(Player player, boolean state) {
+        UserMethods.clearChat(PacketEvents.getAPI().getPlayerManager().getUser(player), state);
     }
 }

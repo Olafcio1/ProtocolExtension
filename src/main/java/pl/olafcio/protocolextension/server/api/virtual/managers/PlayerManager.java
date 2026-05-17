@@ -104,4 +104,9 @@ public interface PlayerManager {
      * Toggles whether the game renders for the client.
      */
     void toggleGameRendering(Player player, boolean state);
+
+    /**
+     * Clears the client's chat.
+     */
+    void clearChat(Player player, boolean state);
 }
