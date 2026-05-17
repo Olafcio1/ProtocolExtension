@@ -19,19 +19,10 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-package pl.olafcio.protocolextension.server.api.virtual;
+package pl.olafcio.protocolextension.both.payloads.c2s;
 
-import org.bukkit.entity.Player;
+import pl.olafcio.protocolextension.both.UIdentifier;
 
-@SuppressWarnings("unused")
-public interface ProtocolExtensionListener {
-    default void onMouseMove(Player player, double x, double y) {}
-    default void onKeyPressed(Player player, int key) {}
-
-    default void onChatOpened(Player player) {}
-    default void onChatClosed(Player player) {}
-
-    default void onConnect(Player player) {}
-    default void onActivated(Player player) {}
-    default void onDisconnect(Player player) {}
+public record ChatOpenedC2SPayload() {
+    public static UIdentifier ID = new UIdentifier("protocolextension", "chat-opened");
 }

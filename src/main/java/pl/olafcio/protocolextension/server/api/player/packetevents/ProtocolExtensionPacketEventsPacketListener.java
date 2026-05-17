@@ -27,6 +27,8 @@ import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientPluginMessage;
 import io.netty.buffer.Unpooled;
 import pl.olafcio.protocolextension.both.payloads.ActivatePayload;
+import pl.olafcio.protocolextension.both.payloads.c2s.ChatClosedC2SPayload;
+import pl.olafcio.protocolextension.both.payloads.c2s.ChatOpenedC2SPayload;
 import pl.olafcio.protocolextension.both.payloads.c2s.KeyPressedC2SPayload;
 import pl.olafcio.protocolextension.both.payloads.c2s.MouseMoveC2SPayload;
 import pl.olafcio.protocolextension.server.ProtocolExtension;
@@ -82,6 +84,20 @@ public class ProtocolExtensionPacketEventsPacketListener implements PacketListen
                         event,
                         MM_TYPES,
                         DOUBLE_ARRAY
+                );
+            } else if (channel.equals(ChatOpenedC2SPayload.ID.toString())) {
+                ProtocolExtension.getAPI().listenerManager().dispatchEvent(
+                        "onChatOpened",
+                        event,
+                        ArrayUtils.EMPTY,
+                        ArrayUtils.EMPTY
+                );
+            } else if (channel.equals(ChatClosedC2SPayload.ID.toString())) {
+                ProtocolExtension.getAPI().listenerManager().dispatchEvent(
+                        "onChatClosed",
+                        event,
+                        ArrayUtils.EMPTY,
+                        ArrayUtils.EMPTY
                 );
             }
         }

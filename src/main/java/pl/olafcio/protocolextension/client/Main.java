@@ -58,6 +58,8 @@ public class Main implements ModInitializer, ClientModInitializer {
         try {
             PayloadRegistry.add(KeyPressedC2SPayload.class, KeyPressedC2SPayload.ID).registerC2S();
             PayloadRegistry.add(MouseMoveC2SPayload.class, MouseMoveC2SPayload.ID).registerC2S();
+            PayloadRegistry.add(ChatOpenedC2SPayload.class, ChatOpenedC2SPayload.ID).registerC2S();
+            PayloadRegistry.add(ChatClosedC2SPayload.class, ChatClosedC2SPayload.ID).registerC2S();
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Failed to add C2S packets", e);
         }

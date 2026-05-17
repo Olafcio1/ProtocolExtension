@@ -26,17 +26,26 @@ import org.jetbrains.annotations.Nullable;
 import pl.olafcio.protocolextension.both.Position;
 import pl.olafcio.protocolextension.server.api.virtual.ProtocolExtensionListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public final class VariableAPI implements ProtocolExtensionListener {
     private static final ArrayList<Player> activatedPlayers = new ArrayList<>();
+    private static final HashSet<Player> insideChat = new HashSet<>();
     private static final HashMap<Player, Position> plr2mousePos = new HashMap<>();
 
     @Override
     public void onMouseMove(Player player, double x, double y) {
         plr2mousePos.put(player, new Position(x, y));
+    }
+
+    @Override
+    public void onChatOpened(Player player) {
+        insideChat.add(player);
+    }
+
+    @Override
+    public void onChatClosed(Player player) {
+        insideChat.remove(player);
     }
 
     @Override
@@ -46,6 +55,7 @@ public final class VariableAPI implements ProtocolExtensionListener {
 
     @Override
     public void onDisconnect(Player player) {
+        insideChat.remove(player);
         plr2mousePos.remove(player);
         activatedPlayers.remove(player);
     }
@@ -67,5 +77,13 @@ public final class VariableAPI implements ProtocolExtensionListener {
 
     public static boolean isActivated(Player player) {
         return activatedPlayers.contains(player);
+    }
+
+    public static Set<Player> getPlayersInsideChat() {
+        return insideChat;
+    }
+
+    public static boolean isInsideChat(Player player) {
+        return insideChat.contains(player);
     }
 }
