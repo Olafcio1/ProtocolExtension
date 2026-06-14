@@ -55,8 +55,8 @@ public enum PayloadUtil {
                     .intercept(FieldAccessor.ofField(name));
         }
 
-        builder = builder.method(ElementMatchers.named("getId"))
-                .intercept(FixedValue.value(cpID));
+        builder = builder.method(ElementMatchers.named("type"))
+                         .intercept(FixedValue.value(cpID));
 
         if (types.length >= 1) {
             var wrapperCo = builder.defineConstructor(Modifier.PUBLIC);

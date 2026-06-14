@@ -72,7 +72,7 @@ public final class PayloadRegistry {
         if (values.length >= 1) {
             var valuesW = wrapper.getDeclaredMethods();
             var valuesWL = Arrays.stream(valuesW)
-                    .filter(x -> !x.getName().equals("getId"))
+                    .filter(x -> !x.getName().equals("type"))
                     .sorted(Comparator.comparingInt(
                             m -> Arrays.stream(values)
                                         .filter(x -> x.getName().equals(m.getName()))
