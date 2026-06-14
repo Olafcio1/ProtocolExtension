@@ -52,7 +52,7 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${versionE.get("fabric")}+${sc.current.version}"
 
     // Paper
-    compileOnly "io.papermc.paper:paper-api:${versionE.get("paper")}"
+        compileOnly "io.papermc.paper:paper-api:${versionE.get("paper")}"
     compileOnly "com.github.retrooper:packetevents-spigot:2.11.1"
 
     // Dependencies
@@ -80,7 +80,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
