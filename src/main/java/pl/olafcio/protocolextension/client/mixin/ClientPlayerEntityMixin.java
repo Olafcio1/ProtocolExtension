@@ -30,7 +30,7 @@ import pl.olafcio.protocolextension.client.state.MoveState;
 
 @Mixin(LocalPlayer.class)
 public class ClientPlayerEntityMixin {
-    @Inject(at = @At("HEAD"), method = "tickMovement", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "aiStep", cancellable = true)
     public void tickMovement(CallbackInfo ci) {
         if (!MoveState.value)
             ci.cancel();
