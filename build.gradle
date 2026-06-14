@@ -55,7 +55,7 @@ dependencies {
     if (versionE.containsKey("paper_copy")) {
         def copy = versionE.get("paper_copy")
         compileOnly "io.papermc.paper:paper-api:${copy}.build.+"
-    } else if (versionE.containsKey("paper")) {
+    } else {
         compileOnly "io.papermc.paper:paper-api:${sc.current.version}.build.+"
     }
 
