@@ -52,13 +52,7 @@ dependencies {
     implementation "net.fabricmc.fabric-api:fabric-api:${versionE.get("fabric")}+${sc.current.version}"
 
     // Paper
-    if (versionE.containsKey("paper_copy")) {
-        def copy = versionE.get("paper_copy")
-        compileOnly "io.papermc.paper:paper-api:${copy}.build.+"
-    } else {
-        compileOnly "io.papermc.paper:paper-api:${sc.current.version}.build.+"
-    }
-
+    compileOnly "io.papermc.paper:paper-api:${versionE.get("paper")}"
     compileOnly "com.github.retrooper:packetevents-spigot:2.11.1"
 
     // Dependencies
