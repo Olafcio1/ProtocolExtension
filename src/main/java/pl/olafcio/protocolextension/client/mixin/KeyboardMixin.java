@@ -21,11 +21,9 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.Keyboard;
 //? if >1.21.8 {
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.KeyInput;
 //?}
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;

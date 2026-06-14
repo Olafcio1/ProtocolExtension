@@ -25,6 +25,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,7 +40,7 @@ import java.awt.*;
 public class IngameHudMixin {
     @Shadow @Final private Minecraft minecraft;
 
-    @Inject(at = @At("TAIL"), method = "render")
+    @Inject(at = @At("TAIL"), method = "extractRenderState")
     //? if >=1.21 {
     public void render(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
     //?} else {
@@ -49,9 +50,9 @@ public class IngameHudMixin {
             var pos = item.pos();
             var text = item.text();
 
-            context.textWithBackdrop(
+            context.text(
                     minecraft.font,
-                    text,
+                    Component.literal(text),
                     (int) (pos.x() * context.guiWidth()),
                     (int) (pos.y() * context.guiHeight()),
                     Color.WHITE.getRGB()
@@ -59,7 +60,7 @@ public class IngameHudMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "renderHotbar", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "extractItemHotbar", cancellable = true)
     //? if >=1.21 {
     private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
     //?} else {

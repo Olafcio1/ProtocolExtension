@@ -136,7 +136,7 @@ public class Main implements ModInitializer, ClientModInitializer {
         });
 
         PayloadRegistry.handleS2C(ClearChatS2CPayload.class, (payload, context) -> {
-            context.client().gui.getChat().clear(false);
+            context.client().gui.getChat().clearMessages(false);
         });
     }
 }
