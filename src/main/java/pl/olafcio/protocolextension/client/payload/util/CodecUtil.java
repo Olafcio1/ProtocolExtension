@@ -21,8 +21,8 @@
 
 package pl.olafcio.protocolextension.client.payload.util;
 
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -33,19 +33,19 @@ import java.util.HashMap;
 public enum CodecUtil {
     ;
 
-    private static final HashMap<Class<?>, PacketCodec<?, ?>> typeMap = new HashMap<>(){{
-        this.put(String.class, PacketCodecs.STRING);
-        this.put(short.class, PacketCodecs.SHORT);
-        this.put(int.class, PacketCodecs.INTEGER);
-        this.put(double.class, PacketCodecs.DOUBLE);
+    private static final HashMap<Class<?>, StreamCodec<?, ?>> typeMap = new HashMap<>(){{
+        this.put(String.class, ByteBufCodecs.STRING_UTF8);
+        this.put(short.class, ByteBufCodecs.SHORT);
+        this.put(int.class, ByteBufCodecs.INT);
+        this.put(double.class, ByteBufCodecs.DOUBLE);
         //? if >=1.21.4 {
-        this.put(boolean.class, PacketCodecs.BOOLEAN);
+        this.put(boolean.class, ByteBufCodecs.BOOL);
         //?} else {
         /*this.put(boolean.class, PacketCodecs.BOOL);
         *///?}
     }};
 
-    public static @NotNull PacketCodec<?, ?> getPacketCodec(Class<?> type) {
+    public static @NotNull StreamCodec<?, ?> getPacketCodec(Class<?> type) {
         var fCodec = typeMap.get(type);
         if (fCodec == null)
             throw new RuntimeException("'" + type.getName() + "' type encountered; cannot get java type's codec");
@@ -54,14 +54,14 @@ public enum CodecUtil {
     }
 
     public static @NotNull Method getMethod(ArrayList<Class<?>> paramTypes) {
-        var methods = PacketCodec.class.getMethods();
+        var methods = StreamCodec.class.getMethods();
         Method method = null;
         for (var m : methods) {
             if (
                     Modifier.isStatic(m.getModifiers()) &&
-                    m.getReturnType() == PacketCodec.class &&
+                    m.getReturnType() == StreamCodec.class &&
                     m.getParameterCount() == paramTypes.size() &&
-                    m.getParameterTypes()[0] == PacketCodec.class
+                    m.getParameterTypes()[0] == StreamCodec.class
             ) {
                 method = m;
                 break;

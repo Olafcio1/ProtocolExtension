@@ -22,10 +22,10 @@
 package pl.olafcio.protocolextension.client.payload;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.Identifier;
 import pl.olafcio.protocolextension.both.Order;
 import pl.olafcio.protocolextension.both.UIdentifier;
 import pl.olafcio.protocolextension.client.payload.func.Unbound;
@@ -49,11 +49,11 @@ public final class PayloadRegistry {
     private static final HashMap<String, PayloadRecord<?>> payloads = new HashMap<>();
 
     @SuppressWarnings("unchecked")
-    public static <T extends Record, G extends CustomPayload> PayloadRecord<?> add(Class<T> record, UIdentifier uid) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        var id = Identifier.of(uid.namespace(), uid.path());
-        var cpID = new CustomPayload.Id<G>(id);
+    public static <T extends Record, G extends CustomPacketPayload> PayloadRecord<?> add(Class<T> record, UIdentifier uid) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        var id = Identifier.fromNamespaceAndPath(uid.namespace(), uid.path());
+        var cpID = new CustomPacketPayload.Type<G>(id);
 
-        PacketCodec<RegistryByteBuf, G> codec;
+        StreamCodec<RegistryFriendlyByteBuf, G> codec;
 
         var constructor = record.getDeclaredConstructors()[0];
         var types = constructor.getParameterTypes();
@@ -89,7 +89,7 @@ public final class PayloadRegistry {
                 var fCodec = CodecUtil.getPacketCodec(fComponent.getReturnType());
                 var fFunction = new Unbound(fComponent);
 
-                paramTypes.add(PacketCodec.class);
+                paramTypes.add(StreamCodec.class);
                 paramTypes.add(Function.class);
 
                 paramValues.add(fCodec);
@@ -101,11 +101,11 @@ public final class PayloadRegistry {
             var method = CodecUtil.getMethod(paramTypes);
             var args = paramValues.toArray(Object[]::new);
 
-            codec = (PacketCodec<RegistryByteBuf, G>)
+            codec = (StreamCodec<RegistryFriendlyByteBuf, G>)
                     method.invoke(null, args);
         } else {
             // TODO: This doesn't require any argument - is there a @SuppressWarnings variant for this?
-            codec = PacketCodec.unit(unit = wrapperCo.newInstance());
+            codec = StreamCodec.unit(unit = wrapperCo.newInstance());
         }
 
         var pr = new PayloadRecord<>(cpID, codec, types, wrapperCo, unit);

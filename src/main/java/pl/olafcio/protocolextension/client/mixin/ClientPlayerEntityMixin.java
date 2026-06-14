@@ -21,14 +21,14 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.olafcio.protocolextension.client.state.MoveState;
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 public class ClientPlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "tickMovement", cancellable = true)
     public void tickMovement(CallbackInfo ci) {

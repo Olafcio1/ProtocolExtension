@@ -21,10 +21,10 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -35,13 +35,13 @@ import pl.olafcio.protocolextension.client.state.hud.HudState;
 
 import java.awt.*;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public class IngameHudMixin {
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final private Minecraft minecraft;
 
     @Inject(at = @At("TAIL"), method = "render")
     //? if >=1.21 {
-    public void render(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    public void render(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
     //?} else {
     /*public void render(DrawContext context, float tickDelta, CallbackInfo ci) {
     *///?}
@@ -49,11 +49,11 @@ public class IngameHudMixin {
             var pos = item.pos();
             var text = item.text();
 
-            context.drawTextWithShadow(
-                    client.textRenderer,
+            context.textWithBackdrop(
+                    minecraft.font,
                     text,
-                    (int) (pos.x() * context.getScaledWindowWidth()),
-                    (int) (pos.y() * context.getScaledWindowHeight()),
+                    (int) (pos.x() * context.guiWidth()),
+                    (int) (pos.y() * context.guiHeight()),
                     Color.WHITE.getRGB()
             );
         }
@@ -61,7 +61,7 @@ public class IngameHudMixin {
 
     @Inject(at = @At("HEAD"), method = "renderHotbar", cancellable = true)
     //? if >=1.21 {
-    private void renderHotbar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
+    private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
     //?} else {
     /*private void renderHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
     *///?}

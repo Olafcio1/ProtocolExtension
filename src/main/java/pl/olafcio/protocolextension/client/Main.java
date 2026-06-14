@@ -23,8 +23,8 @@ package pl.olafcio.protocolextension.client;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.api.ClientModInitializer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.Perspective;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.olafcio.protocolextension.both.Position;
@@ -41,7 +41,7 @@ import pl.olafcio.protocolextension.client.state.hud.HudState;
 import java.lang.reflect.*;
 
 public class Main implements ModInitializer, ClientModInitializer {
-    public static MinecraftClient mc;
+    public static Minecraft mc;
     public static Logger logger;
 
     @Override
@@ -89,7 +89,7 @@ public class Main implements ModInitializer, ClientModInitializer {
         });
 
         PayloadRegistry.handleS2C(HUDToggleS2CPayload.class, (payload, context) -> {
-            context.client().options.hudHidden = !payload.state();
+            context.client().options.hideGui = !payload.state();
         });
 
         PayloadRegistry.handleS2C(HUDPutElementS2CPayload.class, (payload, context) -> {
@@ -110,17 +110,17 @@ public class Main implements ModInitializer, ClientModInitializer {
 
         PayloadRegistry.handleS2C(SetWindowTitleS2CPayload.class, (payload, context) -> {
             WindowTitle.text = payload.title();
-            mc.updateWindowTitle();
+            mc.updateTitle();
         });
 
-        var perspectives = Perspective.values();
+        var perspectives = CameraType.values();
         PayloadRegistry.handleS2C(SetPerspectiveS2CPayload.class, (payload, context) -> {
-            mc.options.setPerspective(perspectives[payload.person()]);
+            mc.options.setCameraType(perspectives[payload.person()]);
         });
 
         PayloadRegistry.handleS2C(ServerCommandS2CPayload.class, (payload, context) -> {
-            context.client().options.sneakKey.setPressed(payload.sneaking());
-            context.client().options.sprintKey.setPressed(payload.sprinting());
+            context.client().options.keyShift.setDown(payload.sneaking());
+            context.client().options.keySprint.setDown(payload.sprinting());
         });
 
         PayloadRegistry.handleS2C(MoveToggleS2CPayload.class, (payload, context) -> {
@@ -136,7 +136,7 @@ public class Main implements ModInitializer, ClientModInitializer {
         });
 
         PayloadRegistry.handleS2C(ClearChatS2CPayload.class, (payload, context) -> {
-            context.client().inGameHud.getChatHud().clear(false);
+            context.client().gui.getChat().clear(false);
         });
     }
 }

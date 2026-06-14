@@ -21,9 +21,8 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.DeltaTracker;
 //? if >=1.21 {
-import net.minecraft.client.render.RenderTickCounter;
 //?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,11 +30,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.olafcio.protocolextension.client.state.GameState;
 
-@Mixin(GameRenderer.class)
+@Mixin(net.minecraft.client.renderer.GameRenderer.class)
 public class GameRendererMixin {
-    @Inject(at = @At("HEAD"), method = "renderWorld", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "renderLevel", cancellable = true)
     //? if >=1.21 {
-    public void renderWorld(RenderTickCounter renderTickCounter, CallbackInfo ci) {
+    public void renderWorld(DeltaTracker renderTickCounter, CallbackInfo ci) {
     //?} else {
     /*public void renderWorld(float tickDelta, long limitTime, CallbackInfo ci) {
     *///?}

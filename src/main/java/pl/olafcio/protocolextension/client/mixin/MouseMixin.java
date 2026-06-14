@@ -21,8 +21,8 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.Mouse;
-import net.minecraft.client.gui.screen.GameMenuScreen;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.screens.PauseScreen;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,15 +33,15 @@ import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
 import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
-@Mixin(Mouse.class)
+@Mixin(MouseHandler.class)
 public class MouseMixin {
-    @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;y:D", shift = At.Shift.AFTER, opcode = Opcodes.GETFIELD), method = "onCursorPos")
+    @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ypos:D", shift = At.Shift.AFTER, opcode = Opcodes.GETFIELD), method = "onMove")
     private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
-        final var screen = Main.mc.currentScreen;
+        final var screen = Main.mc.screen;
         if (
                 NetworkUtil.enabled &&
                 screen != null &&
-                !(screen instanceof GameMenuScreen)
+                !(screen instanceof PauseScreen)
         ) {
             NetworkUtil.send(PayloadRegistry.get(MouseMoveC2SPayload.class).create(
                     x / (double)Main.mc.getWindow().getWidth(),

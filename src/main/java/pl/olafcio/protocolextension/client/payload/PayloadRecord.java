@@ -22,24 +22,24 @@
 package pl.olafcio.protocolextension.client.payload;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 // Don't convert to a record; it makes it even harder to see the methods in autocompletion
-public final class PayloadRecord<T extends CustomPayload> {
-    public final CustomPayload.Id<T> id;
-    public final PacketCodec<RegistryByteBuf, T> codec;
+public final class PayloadRecord<T extends CustomPacketPayload> {
+    public final CustomPacketPayload.Type<T> id;
+    public final StreamCodec<RegistryFriendlyByteBuf, T> codec;
     public final Class<?>[] types;
     public final Constructor<T> constructor;
     public final T unit;
 
     public PayloadRecord(
-            CustomPayload.Id<T> id,
-            PacketCodec<RegistryByteBuf, T> codec,
+            CustomPacketPayload.Type<T> id,
+            StreamCodec<RegistryFriendlyByteBuf, T> codec,
             Class<?>[] types,
             Constructor<T> constructor,
             T unit
@@ -62,12 +62,12 @@ public final class PayloadRecord<T extends CustomPayload> {
     }
 
     public PayloadRecord<T> registerS2C() {
-        PayloadTypeRegistry.playS2C().register(id, codec);
+        PayloadTypeRegistry.clientboundPlay().register(id, codec);
         return this;
     }
 
     public PayloadRecord<T> registerC2S() {
-        PayloadTypeRegistry.playC2S().register(id, codec);
+        PayloadTypeRegistry.serverboundPlay().register(id, codec);
         return this;
     }
 }

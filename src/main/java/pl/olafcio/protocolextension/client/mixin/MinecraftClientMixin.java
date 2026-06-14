@@ -21,9 +21,9 @@
 
 package pl.olafcio.protocolextension.client.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
-import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.main.GameConfig;
+import net.minecraft.client.multiplayer.ServerData;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,23 +36,23 @@ import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
 import pl.olafcio.protocolextension.client.state.WindowTitle;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public abstract class MinecraftClientMixin {
     @Shadow
     @Nullable
-    public abstract ServerInfo getCurrentServerEntry();
+    public abstract ServerData getCurrentServer();
 
     @Inject(at = @At("TAIL"), method = "<init>")
-    public void init(RunArgs args, CallbackInfo ci) {
-        Main.mc = (MinecraftClient) (Object) this;
+    public void init(GameConfig args, CallbackInfo ci) {
+        Main.mc = (Minecraft) (Object) this;
     }
 
-    @Inject(at = @At("RETURN"), method = "getWindowTitle", cancellable = true, order = 1001)
+    @Inject(at = @At("RETURN"), method = "createTitle", cancellable = true, order = 1001)
     public void getWindowTitle(CallbackInfoReturnable<String> cir) {
         // Choosing this implementation over more optimized solutions,
         // because other mods can change the title too.
         if (WindowTitle.text != null) {
-            var server = getCurrentServerEntry();
+            var server = getCurrentServer();
             assert server != null;
 
             var original = cir.getReturnValue();
@@ -67,7 +67,7 @@ public abstract class MinecraftClientMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "onDisconnected")
+    @Inject(at = @At("HEAD"), method = "clearDownloadedResourcePacks")
     public void onDisconnected(CallbackInfo ci) {
         NetworkUtil.reset();
     }

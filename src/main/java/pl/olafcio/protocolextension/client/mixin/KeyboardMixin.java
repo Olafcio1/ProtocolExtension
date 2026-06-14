@@ -23,6 +23,8 @@ package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.Keyboard;
 //? if >1.21.8 {
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.KeyInput;
 //?}
 import org.lwjgl.glfw.GLFW;
@@ -36,7 +38,7 @@ import pl.olafcio.protocolextension.client.Main;
 import pl.olafcio.protocolextension.client.NetworkUtil;
 import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public class KeyboardMixin {
     //? if <=1.21.8 {
     /*@Inject(at = @At("HEAD"), method = "onKey")
@@ -44,9 +46,9 @@ public class KeyboardMixin {
         onKey(action, key, (modifiers & GLFW.GLFW_MOD_ALT) == GLFW.GLFW_MOD_ALT);
     }
     *///?} else {
-    @Inject(at = @At("HEAD"), method = "onKey")
-    public void onKey(long window, int action, KeyInput input, CallbackInfo ci) {
-        onKey(action, input.key(), input.hasAlt());
+    @Inject(at = @At("HEAD"), method = "keyPress")
+    public void onKey(long window, int action, KeyEvent input, CallbackInfo ci) {
+        onKey(action, input.key(), input.hasAltDown());
     }
     //?}
 
@@ -63,7 +65,7 @@ public class KeyboardMixin {
 //              !input.hasCtrl() &&
                 !hasAlt &&
 //              !input.hasShift() &&
-                Main.mc.currentScreen == null
+                Main.mc.screen == null
         ) {
             NetworkUtil.send(PayloadRegistry.get(KeyPressedC2SPayload.class).create(key));
         }

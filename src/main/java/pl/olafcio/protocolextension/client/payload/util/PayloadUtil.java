@@ -29,7 +29,7 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.FieldAccessor;
 import net.bytebuddy.implementation.FixedValue;
 import net.bytebuddy.matcher.ElementMatchers;
-import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import org.jetbrains.annotations.NotNull;
 import pl.olafcio.protocolextension.client.Main;
 
@@ -39,10 +39,10 @@ import java.lang.reflect.RecordComponent;
 public enum PayloadUtil {
     ;
 
-    public static @NotNull Class<?> customPayload(CustomPayload.Id<? extends CustomPayload> cpID, RecordComponent[] values, Class<?>[] types) {
+    public static @NotNull Class<?> customPayload(CustomPacketPayload.Type<? extends CustomPacketPayload> cpID, RecordComponent[] values, Class<?>[] types) {
         DynamicType.Builder<?> builder = new ByteBuddy()
                 .subclass(Object.class)
-                .implement(CustomPayload.class)
+                .implement(CustomPacketPayload.class)
                 .modifiers(Visibility.PUBLIC, TypeManifestation.FINAL);
 
         for (var param : values) {
