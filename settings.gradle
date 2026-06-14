@@ -32,6 +32,6 @@ stonecutter {
     // Configuration goes here
     create(getRootProject()) {
         delegate.versions(*kversions.keySet().toList())
-        vcsVersion = "1.21.11"
+        vcsVersion = "26.1"
     }
 }

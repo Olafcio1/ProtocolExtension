@@ -4,7 +4,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
     id 'maven-publish'
     id 'me.modmuss50.mod-publish-plugin' version '1.1.0'
 }
@@ -47,17 +47,16 @@ final def versions = (LinkedHashMap<
 dependencies {
     // Fabric
     minecraft "com.mojang:minecraft:${sc.current.version}"
-    mappings "net.fabricmc:yarn:${sc.current.version}+build.${versionE.get("yarn")}:v2"
 
-    modImplementation "net.fabricmc:fabric-loader:${property('fabric_loader')}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${versionE.get("fabric")}+${sc.current.version}"
+    implementation "net.fabricmc:fabric-loader:${property('fabric_loader')}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${versionE.get("fabric")}+${sc.current.version}"
 
     // Paper
-    if (versionE.containsKey("paper")) {
-        compileOnly "io.papermc.paper:paper-api:${sc.current.version}-${versionE.get("paper")}"
-    } else if (versionE.containsKey("paper_copy")) {
+    if (versionE.containsKey("paper_copy")) {
         def copy = versionE.get("paper_copy")
-        compileOnly "io.papermc.paper:paper-api:${copy}-${versions.get(copy).get("paper")}"
+        compileOnly "io.papermc.paper:paper-api:${copy}.build.+"
+    } else if (versionE.containsKey("paper")) {
+        compileOnly "io.papermc.paper:paper-api:${sc.current.version}.build.+"
     }
 
     compileOnly "com.github.retrooper:packetevents-spigot:2.11.1"
@@ -118,11 +117,9 @@ tasks.named("jar") {
         for (def bf : binFiles)
             Files.delete(bin.resolve(bf))
     }
-}
 
-tasks.named("remapJar") {
     doLast {
-        var jar = Path.of("$projectDir/build/libs/" + remapJar.archiveFileName.get())
+        var jar = Path.of("$projectDir/build/libs/" + jar.archiveFileName.get())
         if (!Files.exists(jar)) {
             return
         }
@@ -135,10 +132,10 @@ tasks.named("remapJar") {
     }
 }
 
-tasks.named("remapSourcesJar") {
+tasks.named("sourcesJar") {
     doLast {
         Files.move(
-                Path.of("$projectDir/build/libs/" + remapSourcesJar.archiveFileName.get()),
+                Path.of("$projectDir/build/libs/" + sourcesJar.archiveFileName.get()),
                 bin.resolve("protocolextension-${version}-api.jar"),
                 StandardCopyOption.REPLACE_EXISTING,
                 StandardCopyOption.ATOMIC_MOVE
@@ -227,7 +224,7 @@ private static String gitChangelog() {
 }
 
 publishMods {
-    file = tasks.named("remapJar").flatMap { it.archiveFile }
+    file = tasks.named("jar").flatMap { it.archiveFile }
     changelog = gitChangelog()
     type = STABLE
 

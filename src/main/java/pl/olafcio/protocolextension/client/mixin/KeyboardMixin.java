@@ -23,8 +23,8 @@ package pl.olafcio.protocolextension.client.mixin;
 
 import net.minecraft.client.Keyboard;
 //? if >1.21.8 {
-/*import net.minecraft.client.input.KeyInput;
-*///?}
+import net.minecraft.client.input.KeyInput;
+//?}
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -39,16 +39,16 @@ import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 @Mixin(Keyboard.class)
 public class KeyboardMixin {
     //? if <=1.21.8 {
-    @Inject(at = @At("HEAD"), method = "onKey")
+    /*@Inject(at = @At("HEAD"), method = "onKey")
     public void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci) {
         onKey(action, key, (modifiers & GLFW.GLFW_MOD_ALT) == GLFW.GLFW_MOD_ALT);
     }
-    //?} else {
-    /*@Inject(at = @At("HEAD"), method = "onKey")
+    *///?} else {
+    @Inject(at = @At("HEAD"), method = "onKey")
     public void onKey(long window, int action, KeyInput input, CallbackInfo ci) {
         onKey(action, input.key(), input.hasAlt());
     }
-    *///?}
+    //?}
 
     @Unique
     private void onKey(int action, int key, boolean hasAlt) {
