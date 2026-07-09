@@ -37,7 +37,12 @@ import pl.olafcio.protocolextension.client.payload.PayloadRegistry;
 public class MouseMixin {
     @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MouseHandler;ypos:D", shift = At.Shift.AFTER, opcode = Opcodes.GETFIELD), method = "onMove")
     private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
+        //? < 26.2 {
         final var screen = Main.mc.screen;
+        //?} <= 26.2 {
+        /*final var screen = Main.mc.gui.screen();
+        *///?}
+
         if (
                 NetworkUtil.enabled &&
                 screen != null &&

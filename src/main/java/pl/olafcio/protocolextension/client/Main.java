@@ -89,7 +89,18 @@ public class Main implements ModInitializer, ClientModInitializer {
         });
 
         PayloadRegistry.handleS2C(HUDToggleS2CPayload.class, (payload, context) -> {
+            //? < 26.2 {
             context.client().options.hideGui = !payload.state();
+            //?} >= 26.2 {
+            /*
+            if (context.client().gui.hud.isHidden()) {
+                if (!payload.state())
+                    context.client().gui.hud.toggle();
+            } else {
+                if (payload.state())
+                    context.client().gui.hud.toggle();
+            }
+            *///?}
         });
 
         PayloadRegistry.handleS2C(HUDPutElementS2CPayload.class, (payload, context) -> {
@@ -136,7 +147,11 @@ public class Main implements ModInitializer, ClientModInitializer {
         });
 
         PayloadRegistry.handleS2C(ClearChatS2CPayload.class, (payload, context) -> {
+            //? < 26.2 {
             context.client().gui.getChat().clearMessages(false);
+            //?} <= 26.2 {
+            /*context.client().gui.hud.getChat().clearMessages(false);
+            *///?}
         });
     }
 }

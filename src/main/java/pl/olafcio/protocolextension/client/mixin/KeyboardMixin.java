@@ -63,7 +63,11 @@ public class KeyboardMixin {
 //              !input.hasCtrl() &&
                 !hasAlt &&
 //              !input.hasShift() &&
+                //? < 26.2 {
                 Main.mc.screen == null
+                //?} <= 26.2 {
+                /*Main.mc.gui.screen() == null
+                *///?}
         ) {
             NetworkUtil.send(PayloadRegistry.get(KeyPressedC2SPayload.class).create(key));
         }
