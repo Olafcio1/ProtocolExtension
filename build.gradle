@@ -61,9 +61,16 @@ dependencies {
 }
 
 void expandFile(FileCopyDetails it) {
+    final def versions = (LinkedHashMap<
+            String,
+            LinkedHashMap<String, String>
+    >) ext.get("versions"),
+              versionE = versions.get(sc.current.version)
+
     it.expand (
             "version": project.version,
             "minecraft_version": sc.current.version,
+            "minecraft_version_range": versionE.get("minecraft_version_range"),
             "loader_version": property('fabric_loader')
     )
 }

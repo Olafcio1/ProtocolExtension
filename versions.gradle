@@ -23,5 +23,5 @@
 // Paper  >> https://docs.papermc.io/paper/dev/project-setup/
 
 ext.versions = [
-        '26.1': [fabric: '0.145.1', paper: '26.1.1.build.29-alpha']
+        '26.1': [minecraft_version_range: '~26.1', fabric: '0.145.1', paper: '26.1.1.build.29-alpha']
 ]
