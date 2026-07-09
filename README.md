@@ -89,6 +89,8 @@ To start developing with ProtocolExtension, first you need to have a Java IDE in
 An online documentation covering all topics related to ProtocolExtension will be available soon. For those wanting to help, please comment on [this issue](https://github.com/Olafcio1/ProtocolExtension/issues/1).
 
 ## ⚙️ Version compatibility
-| Name    | State     | Download Link                                                                                                                                                       |
-|---------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 26.1    | Supported | [./versions/26.1/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/26.1/bin/protocolextension-15+26.1.jar)          |
+| Name | State | Download Link |
+|------|-------|---------------|
+| 26.1 | Supported | [./versions/26.1/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/26.1/bin/protocolextension-15+26.1.jar) |
+| 26.2 | Supported | [./versions/26.2/bin/protocolextension](https://github.com/Olafcio1/ProtocolExtension/raw/refs/heads/main/versions/26.2/bin/protocolextension-15+26.2.jar) |
+
